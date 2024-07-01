@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.doctor.stars.biz.mapper.RsAwemeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="cc.doctor.stars.biz.model.RsAweme">
+        <id column="id" property="id" />
+        <result column="aweme_id" property="awemeId" />
+        <result column="aw_title" property="awTitle" />
+        <result column="aw_create_time" property="awCreateTime" />
+        <result column="aw_st_admire_count" property="awStAdmireCount" />
+        <result column="aw_st_comment_count" property="awStCommentCount" />
+        <result column="aw_st_digg_count" property="awStDiggCount" />
+        <result column="aw_st_collect_count" property="awStCollectCount" />
+        <result column="aw_st_play_count" property="awStPlayCount" />
+        <result column="aw_st_share_count" property="awStShareCount" />
+        <result column="aw_v_play_url" property="awVPlayUrl" />
+        <result column="aw_v_play_uri" property="awVPlayUri" />
+        <result column="aw_v_play_size" property="awVPlaySize" />
+        <result column="aw_cover_url" property="awCoverUrl" />
+        <result column="aw_au_uid" property="awAuUid" />
+        <result column="aw_au_nickname" property="awAuNickname" />
+        <result column="aw_au_sec_uid" property="awAuSecUid" />
+        <result column="is_top" property="isTop" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, aweme_id, aw_title, aw_create_time, aw_st_admire_count, aw_st_comment_count, aw_st_digg_count, aw_st_collect_count, aw_st_play_count, aw_st_share_count, aw_v_play_url, aw_v_play_uri, aw_v_play_size, aw_cover_url, aw_au_uid, aw_au_nickname, aw_au_sec_uid, is_top, create_time, update_time
+    </sql>
+    <insert id="insertBatch">
+        insert into rs_aweme(aweme_id, aw_title, aw_create_time, aw_st_admire_count, aw_st_comment_count, aw_st_digg_count, aw_st_collect_count, aw_st_play_count, aw_st_share_count, aw_v_play_url, aw_v_play_uri, aw_v_play_size, aw_cover_url, aw_au_uid, aw_au_nickname, aw_au_sec_uid, is_top)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.awemeId},#{item.awTitle},#{item.awCreateTime},#{item.awStAdmireCount},#{item.awStCommentCount},#{item.awStDiggCount},#{item.awStCollectCount},
+             #{item.awStPlayCount},#{item.awStShareCount},#{item.awVPlayUrl},#{item.awVPlayUri},#{item.awVPlaySize},#{item.awCoverUrl},#{item.awAuUid},
+             #{item.awAuNickname},#{item.awAuSecUid},#{item.isTop})
+        </foreach>
+    </insert>
+
+</mapper>
