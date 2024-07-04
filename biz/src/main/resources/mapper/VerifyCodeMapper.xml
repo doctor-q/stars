@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.doctor.stars.biz.mapper.VerifyCodeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="cc.doctor.stars.biz.model.VerifyCode">
+        <id column="id" property="id" />
+        <result column="email" property="email" />
+        <result column="verify_code" property="verifyCode" />
+        <result column="expired" property="expired" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, email, verify_code, expired, create_time
+    </sql>
+    <update id="expiredOld">
+        update verify_code set expired=1 where email=#{email} and expired=0
+    </update>
+
+</mapper>

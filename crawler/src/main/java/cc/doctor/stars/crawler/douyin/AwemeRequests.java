@@ -1,7 +1,7 @@
 package cc.doctor.stars.crawler.douyin;
 
 import cc.doctor.stars.crawler.douyin.aweme.response.AwemeResponse;
-import cc.doctor.stars.crawler.utils.HttpUtils;
+import cc.doctor.stars.biz.utils.HttpUtils;
 import com.alibaba.fastjson.JSON;
 import org.apache.http.client.methods.CloseableHttpResponse;
 

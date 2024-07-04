@@ -1,4 +1,4 @@
-package cc.doctor.stars.crawler.utils;
+package cc.doctor.stars.biz.utils;
 
 import org.springframework.util.StringUtils;
 

@@ -1,4 +1,4 @@
-package cc.doctor.stars.crawler.utils;
+package cc.doctor.stars.biz.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;

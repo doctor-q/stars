@@ -1,9 +1,8 @@
 package cc.doctor.stars.crawler.douyin.aweme.response;
 
 import cc.doctor.stars.biz.model.RsAweme;
-import cc.doctor.stars.crawler.utils.CollectUtils;
+import cc.doctor.stars.biz.utils.CollectUtils;
 import lombok.Data;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 

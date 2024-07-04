@@ -32,3 +32,27 @@ create table rs_aweme (
     update_time timestamp not null default current_timestamp on update current_timestamp comment '更新时间',
     primary key (id)
 ) default charset utf8mb4 comment '抖音短视频';
+
+create table users (
+   id int unsigned not null auto_increment comment 'ID',
+   nickname varchar(32) not null comment '昵称',
+   email varchar(64) not null comment '邮箱',
+   password varchar(64) not null comment '密码MD5',
+   child_gender tinyint not null comment '孩子性别',
+   child_year int unsigned not null comment '孩子出生年份',
+   child_month int unsigned not null comment '孩子出生月份',
+   create_time timestamp not null default current_timestamp comment '创建时间',
+   update_time timestamp not null default current_timestamp on update current_timestamp comment '更新时间',
+   primary key (id),
+   unique key uniq_email(email)
+) default charset utf8mb4 comment '用户表';
+
+create table verify_code (
+    id int unsigned not null auto_increment comment 'ID',
+    email varchar(64) not null comment '邮箱',
+    verify_code varchar(12) not null comment '验证码',
+    expired tinyint not null default 0 comment '是否失效，0-否，1-是',
+    create_time timestamp not null default current_timestamp comment '创建时间',
+    primary key (id),
+    key idx_email_time(email, create_time)
+) default charset utf8mb4 comment '验证码表';
