@@ -7,6 +7,7 @@ import cc.doctor.stars.biz.mapper.VerifyCodeMapper;
 import cc.doctor.stars.biz.model.Users;
 import cc.doctor.stars.biz.model.VerifyCode;
 import cc.doctor.stars.web.dto.*;
+import cc.doctor.stars.web.dto.common.Response;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -75,10 +76,15 @@ public class UserService {
         verifyCode.setEmail(request.getEmail());
         verifyCode.setVerifyCode(code);
         verifyCodeMapper.insert(verifyCode);
+        // 发送邮件
         return Response.success();
     }
 
     public Response<?> logout() {
+        return null;
+    }
+
+    public Response<?> closeAccount() {
         return null;
     }
 }

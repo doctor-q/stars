@@ -1,11 +1,13 @@
-package cc.doctor.stars.web.dto;
+package cc.doctor.stars.web.dto.common;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class Response<T> {
 
-    private static final int SUCCESS_CODE = 200;
+    public static final int SUCCESS_CODE = 200;
 
     private int code;
 

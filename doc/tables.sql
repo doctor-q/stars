@@ -11,6 +11,7 @@ create table resources (
 
 create table rs_aweme (
     id int unsigned not null auto_increment comment 'ID',
+    rs_id int unsigned not null comment '资源id',
     aweme_id varchar(32) not null comment '短视频id',
     aw_title varchar(256) not null comment '标题',
     aw_create_time bigint unsigned not null comment '抖音创建时间',
@@ -32,6 +33,16 @@ create table rs_aweme (
     update_time timestamp not null default current_timestamp on update current_timestamp comment '更新时间',
     primary key (id)
 ) default charset utf8mb4 comment '抖音短视频';
+
+create table rs_author (
+   id int unsigned not null auto_increment comment 'ID',
+   uid varchar(64) not null comment '平台用户id',
+   rs_type tinyint not null comment '资源来源类型',
+   nick_name varchar(64) not null comment '昵称',
+   description varchar(256) comment '描述',
+   avatar_url varchar(256) comment '头像地址',
+   primary key (id)
+) default charset utf8mb4 comment '资源作者';
 
 create table users (
    id int unsigned not null auto_increment comment 'ID',
@@ -56,3 +67,43 @@ create table verify_code (
     primary key (id),
     key idx_email_time(email, create_time)
 ) default charset utf8mb4 comment '验证码表';
+
+create table rs_collect (
+    id int unsigned not null auto_increment comment 'ID',
+    user_id int unsigned not null comment '用户id',
+    rs_id int unsigned not null comment '资源id',
+    collect_status tinyint not null default 0 comment '收藏状态，0-收藏，1-取消收藏',
+    collect_time timestamp not null default current_timestamp comment '收藏时间',
+    create_time timestamp not null default current_timestamp comment '创建时间',
+    update_time timestamp not null default current_timestamp on update current_timestamp comment '更新时间',
+    primary key (id),
+    unique key uniq_collect(user_id, rs_id)
+) default charset utf8mb4 comment '资源收藏表';
+
+create table rs_author_follow (
+      id int unsigned not null auto_increment comment 'ID',
+      user_id int unsigned not null comment '用户id',
+      author_id int unsigned not null comment '资源id',
+      follow_status tinyint not null default 0 comment '关注状态，0-关注，1-取消关注',
+      follow_time timestamp not null default current_timestamp comment '关注时间',
+      create_time timestamp not null default current_timestamp comment '创建时间',
+      update_time timestamp not null default current_timestamp on update current_timestamp comment '更新时间',
+      primary key (id),
+      unique key uniq_collect(user_id, author_id)
+) default charset utf8mb4 comment '资源收藏表';
+
+create table rs_history (
+    id int unsigned not null auto_increment comment 'ID',
+    user_id int unsigned not null comment '用户id',
+    rs_id int unsigned not null comment '资源id',
+    create_time timestamp not null default current_timestamp comment '创建时间',
+    primary key (id)
+) default charset utf8mb4 comment '资源历史表';
+
+create table rs_search_history (
+    id int unsigned not null auto_increment comment 'ID',
+    user_id int unsigned not null comment '用户id',
+    keywords varchar not null comment '关键字',
+    create_time timestamp not null default current_timestamp comment '创建时间',
+    primary key (id)
+) default charset utf8mb4 comment '资源历史表';

@@ -5,12 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.io.UnsupportedEncodingException;
-
-/**
- * @author zengjinju
- * @date 2019/9/16 上午11:48
- */
 @Configuration
 @Slf4j
 public class JwtConfig {
@@ -19,11 +13,6 @@ public class JwtConfig {
 
     @Bean
     public Algorithm algorithm() {
-        try {
-            return Algorithm.HMAC256(SECRET);
-        } catch (UnsupportedEncodingException e) {
-            log.error("", e);
-        }
-        return null;
+        return Algorithm.HMAC256(SECRET);
     }
 }
