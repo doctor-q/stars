@@ -6,6 +6,7 @@
     <resultMap id="BaseResultMap" type="cc.doctor.stars.biz.model.Users">
         <id column="id" property="id" />
         <result column="nickname" property="nickname" />
+        <result column="role" property="role" />
         <result column="email" property="email" />
         <result column="password" property="password" />
         <result column="child_gender" property="childGender" />
@@ -17,7 +18,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, nickname, email, password, child_gender, child_year, child_month, create_time, update_time
+        id, nickname, `role`, email, password, child_gender, child_year, child_month, create_time, update_time
     </sql>
 
 </mapper>

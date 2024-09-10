@@ -39,6 +39,11 @@ public class Users implements Serializable {
     private String nickname;
 
     /**
+     * 角色
+     */
+    private Integer role;
+
+    /**
      * 邮箱
      */
     @TableField("email")
@@ -54,7 +59,7 @@ public class Users implements Serializable {
      * 孩子性别
      */
     @TableField("child_gender")
-    private Byte childGender;
+    private Integer childGender;
 
     /**
      * 孩子出生年份

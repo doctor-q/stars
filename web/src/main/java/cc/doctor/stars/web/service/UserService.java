@@ -6,7 +6,10 @@ import cc.doctor.stars.biz.mapper.UsersMapper;
 import cc.doctor.stars.biz.mapper.VerifyCodeMapper;
 import cc.doctor.stars.biz.model.Users;
 import cc.doctor.stars.biz.model.VerifyCode;
-import cc.doctor.stars.web.dto.*;
+import cc.doctor.stars.web.dto.EmailRequest;
+import cc.doctor.stars.web.dto.LoginRequest;
+import cc.doctor.stars.web.dto.LoginResponse;
+import cc.doctor.stars.web.dto.RegisterRequest;
 import cc.doctor.stars.web.dto.common.Response;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +23,7 @@ import java.util.Random;
 @Service
 public class UserService {
 
-    private static final long VERIFY_CODE_EXPIRED_MILLS = 5 * 60 * 1000;
+    private static final long VERIFY_CODE_EXPIRED_SECONDS = 5 * 60;
 
     @Autowired
     private UsersMapper usersMapper;
@@ -51,7 +54,7 @@ public class UserService {
             throw new BusinessException(BusinessException.INVALID_INPUT_CODE, "验证码错误");
         }
         VerifyCode verifyCode = verifyCodes.get(0);
-        if (verifyCode.getExpired() == YesOrNoEnum.YES.getValue() || (verifyCode.getCreateTime().toEpochSecond(ZoneOffset.ofHours(8)) + VERIFY_CODE_EXPIRED_MILLS < System.currentTimeMillis())) {
+        if (verifyCode.getExpired() == YesOrNoEnum.YES.getValue() || (verifyCode.getCreateTime().toEpochSecond(ZoneOffset.ofHours(8)) + VERIFY_CODE_EXPIRED_SECONDS < (System.currentTimeMillis() / 1000))) {
             throw new BusinessException(BusinessException.INVALID_INPUT_CODE, "验证码已过期");
         }
         Users users = request.toUsers();
