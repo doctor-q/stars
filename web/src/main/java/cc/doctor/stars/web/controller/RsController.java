@@ -1,5 +1,6 @@
 package cc.doctor.stars.web.controller;
 
+import cc.doctor.stars.biz.exception.BusinessException;
 import cc.doctor.stars.web.dto.RsCollectRequest;
 import cc.doctor.stars.web.dto.RsDetailResponse;
 import cc.doctor.stars.web.dto.common.PageRequest;
@@ -23,7 +24,7 @@ public class RsController {
      * 收藏资源
      */
     @PostMapping("collect")
-    public Response<?> collectRs(@RequestBody @Validated RsCollectRequest request) {
+    public Response<?> collectRs(@RequestBody @Validated RsCollectRequest request) throws BusinessException {
         return rsService.collectRs(request);
     }
 

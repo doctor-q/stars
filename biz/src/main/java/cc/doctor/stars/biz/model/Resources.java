@@ -36,13 +36,13 @@ public class Resources implements Serializable {
      * 资源来源类型
      */
     @TableField("rs_type")
-    private Byte rsType;
+    private Integer rsType;
 
     /**
      * 资源文件类型
      */
     @TableField("rs_mime_type")
-    private Byte rsMimeType;
+    private Integer rsMimeType;
 
     /**
      * 资源路径

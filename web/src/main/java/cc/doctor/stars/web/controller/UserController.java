@@ -2,15 +2,12 @@ package cc.doctor.stars.web.controller;
 
 import cc.doctor.stars.biz.exception.BusinessException;
 import cc.doctor.stars.web.dto.*;
-import cc.doctor.stars.web.dto.common.PageResponse;
 import cc.doctor.stars.web.dto.common.Response;
 import cc.doctor.stars.web.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 public class UserController {
@@ -38,7 +35,7 @@ public class UserController {
      * 注册
      */
     @PostMapping("register")
-    public Response<?> register(@RequestBody @Validated RegisterRequest request) throws BusinessException {
+    public Response<?> register(@RequestBody @Validated UserRegisterRequest request) throws BusinessException {
         return userService.register(request);
     }
 
@@ -50,12 +47,17 @@ public class UserController {
         return userService.closeAccount();
     }
 
+    @GetMapping("user/info")
+    public Response<UserInfo> getUser() {
+        return userService.getUser();
+    }
+
     /**
-     * 用户列表
+     * 更新用户
      */
-    @GetMapping("user/page")
-    public PageResponse<UserResponse> userPage() {
-        return null;
+    @PostMapping("user/update")
+    public Response<?> updateUser(@RequestBody @Validated UserInfo request) throws BusinessException {
+        return userService.updateUser(request);
     }
 
     /**
@@ -64,5 +66,13 @@ public class UserController {
     @GetMapping("user/detail")
     public Response<UserDetailResponse> userDetail() {
         return null;
+    }
+
+    /**
+     * 退出登录
+     */
+    @GetMapping("logout")
+    public Response<?> logout() {
+        return userService.logout();
     }
 }

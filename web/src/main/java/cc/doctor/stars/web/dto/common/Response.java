@@ -32,8 +32,8 @@ public class Response<T> {
         return response;
     }
 
-    public static Response<?> fail(int code, String message) {
-        Response<?> response = new Response<>();
+    public static <D> Response<D> fail(int code, String message) {
+        Response<D> response = new Response<>();
         response.setCode(code);
         response.setMsg(message);
         return response;

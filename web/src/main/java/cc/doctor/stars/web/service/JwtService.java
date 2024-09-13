@@ -25,7 +25,7 @@ public class JwtService {
 
     private static final String HEADER_CLAIM_ACCOUNT_ID = "_user_id";
     private static final String HEADER_CLAIM_ACCOUNT_NAME = "_user_name";
-    private static final String HEADER_CLAIM_ACCOUNT_PHONE = "_user_phone";
+    private static final String HEADER_CLAIM_ACCOUNT_EMAIL = "_user_email";
 
     @Autowired
     private Algorithm algorithm;
@@ -33,7 +33,7 @@ public class JwtService {
     public String generateAccountToken(Users account) {
         return JWT.create().withClaim(HEADER_CLAIM_ACCOUNT_ID, account.getId())
                 .withClaim(HEADER_CLAIM_ACCOUNT_NAME, account.getNickname())
-                .withClaim(HEADER_CLAIM_ACCOUNT_PHONE, account.getEmail())
+                .withClaim(HEADER_CLAIM_ACCOUNT_EMAIL, account.getEmail())
                 .withExpiresAt(DateUtils.addHour(new Date(), 24))        //过期时间
                 .sign(algorithm);
     }
@@ -51,7 +51,7 @@ public class JwtService {
             user.setId(userId.asInt());
             Claim accountName = claims.get(HEADER_CLAIM_ACCOUNT_NAME);
             user.setNickname(accountName.asString());
-            user.setEmail(claims.get(HEADER_CLAIM_ACCOUNT_PHONE).asString());
+            user.setEmail(claims.get(HEADER_CLAIM_ACCOUNT_EMAIL).asString());
             return user;
         } catch (Exception e) {
             log.error("token解析异常", e);

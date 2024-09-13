@@ -10,15 +10,15 @@
         <result column="email" property="email" />
         <result column="password" property="password" />
         <result column="child_gender" property="childGender" />
-        <result column="child_year" property="childYear" />
-        <result column="child_month" property="childMonth" />
+        <result column="child_birth" property="childBirth" />
+        <result column="closed" property="closed" />
         <result column="create_time" property="createTime" />
         <result column="update_time" property="updateTime" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, nickname, `role`, email, password, child_gender, child_year, child_month, create_time, update_time
+        id, nickname, `role`, email, password, child_gender, child_birth, closed, create_time, update_time
     </sql>
 
 </mapper>

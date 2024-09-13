@@ -2,16 +2,18 @@ package cc.doctor.stars.web.service;
 
 import cc.doctor.stars.biz.enums.YesOrNoEnum;
 import cc.doctor.stars.biz.exception.BusinessException;
+import cc.doctor.stars.biz.mapper.FileMapper;
 import cc.doctor.stars.biz.mapper.UsersMapper;
 import cc.doctor.stars.biz.mapper.VerifyCodeMapper;
+import cc.doctor.stars.biz.model.File;
 import cc.doctor.stars.biz.model.Users;
 import cc.doctor.stars.biz.model.VerifyCode;
-import cc.doctor.stars.web.dto.EmailRequest;
-import cc.doctor.stars.web.dto.LoginRequest;
-import cc.doctor.stars.web.dto.LoginResponse;
-import cc.doctor.stars.web.dto.RegisterRequest;
+import cc.doctor.stars.biz.store.StoreFactory;
+import cc.doctor.stars.web.dto.*;
 import cc.doctor.stars.web.dto.common.Response;
+import cc.doctor.stars.web.filter.RequestContext;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +23,7 @@ import java.util.List;
 import java.util.Random;
 
 @Service
+@Slf4j
 public class UserService {
 
     private static final long VERIFY_CODE_EXPIRED_SECONDS = 5 * 60;
@@ -34,6 +37,15 @@ public class UserService {
     @Autowired
     private JwtService jwtService;
 
+    @Autowired
+    private RequestContext requestContext;
+
+    @Autowired
+    private FileMapper fileMapper;
+
+    @Autowired
+    private FileService fileService;
+
     public Response<LoginResponse> login(LoginRequest request) throws BusinessException {
         Users users = usersMapper.selectOne(new QueryWrapper<Users>().eq("email", request.getEmail()).eq("password", request.getPassword()));
         if (users == null) {
@@ -43,7 +55,7 @@ public class UserService {
         return Response.success(new LoginResponse(users.getNickname(), token));
     }
 
-    public Response<?> register(RegisterRequest request) throws BusinessException {
+    public Response<?> register(UserRegisterRequest request) throws BusinessException {
         Long count = usersMapper.selectCount(new QueryWrapper<Users>().eq("email", request.getEmail()));
         if (count > 0) {
             throw new BusinessException(BusinessException.INVALID_INPUT_CODE, "账户已存在");
@@ -88,6 +100,34 @@ public class UserService {
     }
 
     public Response<?> closeAccount() {
-        return null;
+        Integer userId = requestContext.getUserId();
+        Users users = new Users();
+        users.setId(userId);
+        users.setClosed(YesOrNoEnum.YES.getValue());
+        usersMapper.updateById(users);
+        return Response.success();
+    }
+
+    public Response<?> updateUser(UserInfo request) throws BusinessException {
+        Users users = request.toUsers();
+        Integer userId = requestContext.getUserId();
+        users.setId(userId);
+        usersMapper.updateById(users);
+        return Response.success();
+    }
+
+    public Response<UserInfo> getUser() {
+        Integer userId = requestContext.getUserId();
+        Users users = usersMapper.selectById(userId);
+        if (users == null) {
+            return Response.fail(BusinessException.INVALID_TOKEN, "账号错误");
+        }
+        UserInfo userInfo = new UserInfo(users);
+        if (users.getAvatar() != null) {
+            File file = fileMapper.selectById(users.getAvatar());
+            String url = StoreFactory.createUrl(file);
+            userInfo.setAvatarUrl(url);
+        }
+        return Response.success(userInfo);
     }
 }

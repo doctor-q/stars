@@ -12,22 +12,22 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 资源收藏表
+ * 反馈表
  * </p>
  *
  * @author doctor
- * @since 2024.09.05
+ * @since 2024.09.13
  */
 @Getter
 @Setter
 @Accessors(chain = true)
-@TableName("rs_collect")
-public class RsCollect implements Serializable {
+@TableName("feedback")
+public class Feedback implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * ID
+     * 主键
      */
       @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
@@ -39,32 +39,20 @@ public class RsCollect implements Serializable {
     private Integer userId;
 
     /**
-     * 资源id
+     * 文件名
      */
-    @TableField("rs_id")
-    private Integer rsId;
+    @TableField("feedback")
+    private String feedback;
 
     /**
-     * 收藏状态，0-收藏，1-取消收藏
+     * 文件ID
      */
-    @TableField("collect_status")
-    private Integer collectStatus;
-
-    /**
-     * 收藏时间
-     */
-    @TableField("collect_time")
-    private LocalDateTime collectTime;
+    @TableField("file_ids")
+    private String fileIds;
 
     /**
      * 创建时间
      */
-    @TableField("create_time")
-    private LocalDateTime createTime;
-
-    /**
-     * 更新时间
-     */
-    @TableField("update_time")
-    private LocalDateTime updateTime;
+    @TableField("created_at")
+    private LocalDateTime createdAt;
 }

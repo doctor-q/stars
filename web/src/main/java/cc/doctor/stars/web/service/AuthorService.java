@@ -12,6 +12,7 @@ import cc.doctor.stars.web.dto.AuthorResponse;
 import cc.doctor.stars.web.dto.common.PageRequest;
 import cc.doctor.stars.web.dto.common.PageResponse;
 import cc.doctor.stars.web.dto.common.Response;
+import cc.doctor.stars.web.filter.RequestContext;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ public class AuthorService {
     @Autowired
     private RsAuthorFollowMapper authorFollowMapper;
 
+    @Autowired
+    private RequestContext requestContext;
+
     public PageResponse<AuthorResponse> searchAuthorPage(PageRequest<String> request) {
         Page<RsAuthor> page = new Page<>(request.offset(), request.limit());
         Page<RsAuthor> p = authorMapper.selectPage(page, new LambdaQueryWrapper<RsAuthor>().like(StringUtils.isEmpty(request.getData()), RsAuthor::getNickName, request.getData()));
@@ -37,7 +41,7 @@ public class AuthorService {
 
     public Response<?> followAuthor(AuthorFollowRequest request) throws BusinessException {
         RsAuthorFollow authorFollow = authorFollowMapper.selectOne(new LambdaQueryWrapper<RsAuthorFollow>()
-                .eq(RsAuthorFollow::getAuthorId, request.getAuthorId()).eq(RsAuthorFollow::getUserId, null));
+                .eq(RsAuthorFollow::getAuthorId, request.getAuthorId()).eq(RsAuthorFollow::getUserId, requestContext.getUserId()));
         // 关注
         if (request.getFollow() == YesOrNoEnum.YES.getValue()) {
             if (authorFollow != null) {
@@ -47,7 +51,7 @@ public class AuthorService {
                     authorFollowMapper.updateById(request.update(authorFollow.getId()));
                 }
             } else {
-                authorFollowMapper.insert(request.insert());
+                authorFollowMapper.insert(request.insert(requestContext.getUserId()));
             }
         } else {
             // 取消关注

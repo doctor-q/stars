@@ -27,7 +27,7 @@ public class PageRequest<T> {
         return pageSize;
     }
 
-    public Page<?> toPage() {
+    public <D> Page<D> toPage() {
         return new Page<>(offset(), limit());
     }
 }

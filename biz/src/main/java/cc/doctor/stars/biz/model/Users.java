@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,6 +32,11 @@ public class Users implements Serializable {
      */
       @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
+
+    /**
+     * 头像
+     */
+    private Integer avatar;
 
     /**
      * 昵称
@@ -62,16 +68,15 @@ public class Users implements Serializable {
     private Integer childGender;
 
     /**
-     * 孩子出生年份
+     * 孩子出生日期
      */
-    @TableField("child_year")
-    private Integer childYear;
+    @TableField("child_birth")
+    private LocalDate childBirth;
 
     /**
-     * 孩子出生月份
+     * 账户是否关闭
      */
-    @TableField("child_month")
-    private Integer childMonth;
+    private Integer closed;
 
     /**
      * 创建时间

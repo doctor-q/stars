@@ -1,19 +1,43 @@
 package cc.doctor.stars.biz.store;
 
+import cc.doctor.stars.biz.enums.StoreTypeEnum;
+import cc.doctor.stars.biz.model.File;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
  * ali oss
  */
+@Service
 public class OssLoader implements Loader {
-    @Override
-    public void upload(InputStream stream) {
 
+    @PostConstruct
+    public void init() {
+        StoreFactory.addLoader(type(), this);
     }
 
     @Override
-    public OutputStream download(String uri) {
+    public StoreTypeEnum type() {
+        return StoreTypeEnum.OSS;
+    }
+
+    @Override
+    public String upload(InputStream stream) {
+        return null;
+    }
+
+    @Override
+    public InputStream load(File file) throws FileNotFoundException, IOException {
+        return null;
+    }
+
+    @Override
+    public String createUrl(File file) {
         return null;
     }
 }

@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 public class BusinessException extends Exception {
 
     public static final int INVALID_INPUT_CODE = 400;
+    public static final int INVALID_TOKEN = 300;
 
     private int code;
     private String message;

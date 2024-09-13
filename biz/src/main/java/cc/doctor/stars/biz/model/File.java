@@ -12,25 +12,30 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 资源收藏表
+ * 文件表
  * </p>
  *
  * @author doctor
- * @since 2024.09.05
+ * @since 2024.09.12
  */
 @Getter
 @Setter
 @Accessors(chain = true)
-@TableName("rs_collect")
-public class RsCollect implements Serializable {
+@TableName("file")
+public class File implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * ID
+     * 主键
      */
       @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
+
+    /**
+     * 是否公有
+     */
+    private Integer pub;
 
     /**
      * 用户id
@@ -39,32 +44,38 @@ public class RsCollect implements Serializable {
     private Integer userId;
 
     /**
-     * 资源id
+     * 文件名
      */
-    @TableField("rs_id")
-    private Integer rsId;
+    @TableField("file_name")
+    private String fileName;
 
     /**
-     * 收藏状态，0-收藏，1-取消收藏
+     * 存储类型
      */
-    @TableField("collect_status")
-    private Integer collectStatus;
+    @TableField("store_type")
+    private Integer storeType;
 
     /**
-     * 收藏时间
+     * 文件存储路径
      */
-    @TableField("collect_time")
-    private LocalDateTime collectTime;
+    @TableField("path")
+    private String path;
+
+    /**
+     * 是否删除
+     */
+    @TableField("is_deleted")
+    private Byte isDeleted;
 
     /**
      * 创建时间
      */
-    @TableField("create_time")
-    private LocalDateTime createTime;
+    @TableField("created_at")
+    private LocalDateTime createdAt;
 
     /**
      * 更新时间
      */
-    @TableField("update_time")
-    private LocalDateTime updateTime;
+    @TableField("updated_at")
+    private LocalDateTime updatedAt;
 }

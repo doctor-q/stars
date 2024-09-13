@@ -107,3 +107,25 @@ create table rs_search_history (
     create_time timestamp not null default current_timestamp comment '创建时间',
     primary key (id)
 ) default charset utf8mb4 comment '资源历史表';
+
+create table file
+(
+    id    int unsigned auto_increment comment '主键' primary key,
+    public tinyint not null default 0 comment '是否公有',
+    user_id    int unsigned null comment '用户id',
+    file_name  varchar(50)  default ''                not null comment '文件名',
+    store_type tinyint not null default 0 comment '存储类型',
+    path       varchar(200) default ''                not null comment '文件存储路径',
+    is_deleted tinyint      default 0                 not null comment '是否删除',
+    created_at datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
+    updated_at datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间'
+) comment '文件表' charset = utf8mb4;
+
+create table feedback
+(
+    id    int unsigned auto_increment comment '主键' primary key,
+    user_id    int unsigned not null comment '用户id',
+    feedback  text             not null comment '文件名',
+    file_ids       varchar(200) null comment '文件ID',
+    created_at datetime     default CURRENT_TIMESTAMP not null comment '创建时间'
+) comment '反馈表' charset = utf8mb4;
