@@ -75,6 +75,9 @@ public class RsService {
                 new LambdaQueryWrapper<RsCollect>().eq(RsCollect::getUserId, requestContext.getUserId())
                         .eq(RsCollect::getCollectStatus, YesOrNoEnum.YES.getValue()).orderByDesc(RsCollect::getCollectTime));
         List<Integer> rsIds = page.getRecords().stream().map(RsCollect::getRsId).collect(Collectors.toList());
+        if (rsIds.isEmpty()) {
+            return PageResponse.pageResponse(page);
+        }
         List<Resources> resources = resourcesMapper.selectBatchIds(rsIds);
         Map<Integer, Resources> resourcesMap = resources.stream().collect(Collectors.toMap(Resources::getId, v -> v));
         List<RsAweme> rsAwemes = rsAwemeMapper.selectList(new LambdaQueryWrapper<RsAweme>().eq(RsAweme::getRsId, rsIds));
@@ -88,6 +91,9 @@ public class RsService {
                 new LambdaQueryWrapper<RsHistory>().eq(RsHistory::getUserId, requestContext.getUserId())
                         .orderByDesc(RsHistory::getCreateTime));
         List<Integer> rsIds = page.getRecords().stream().map(RsHistory::getRsId).collect(Collectors.toList());
+        if (rsIds.isEmpty()) {
+            return PageResponse.pageResponse(page);
+        }
         List<Resources> resources = resourcesMapper.selectBatchIds(rsIds);
         Map<Integer, Resources> resourcesMap = resources.stream().collect(Collectors.toMap(Resources::getId, v -> v));
         List<RsAweme> rsAwemes = rsAwemeMapper.selectList(new LambdaQueryWrapper<RsAweme>().eq(RsAweme::getRsId, rsIds));

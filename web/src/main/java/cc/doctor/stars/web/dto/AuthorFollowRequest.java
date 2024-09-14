@@ -4,11 +4,14 @@ import cc.doctor.stars.biz.enums.YesOrNoEnum;
 import cc.doctor.stars.biz.model.RsAuthorFollow;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
 public class AuthorFollowRequest {
+    @NotNull(message = "作者不能为空")
     private Integer authorId;
+    @NotNull(message = "关注状态不能为空")
     private Integer follow;
 
     public RsAuthorFollow update(Integer id) {

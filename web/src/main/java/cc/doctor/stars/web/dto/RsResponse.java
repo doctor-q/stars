@@ -16,6 +16,7 @@ public class RsResponse {
     private Integer rsMimeType;
     private String rsUri;
     private Aweme aweme;
+    private Author author;
 
     public RsResponse(Resources resources, RsAweme rsAweme) {
         this.id = resources.getId();
@@ -34,13 +35,19 @@ public class RsResponse {
     }
 
     @Data
-    static
-    public class Aweme {
+    public static class Aweme {
         private Integer authorId;
         private String awAuthorNickname;
         private String awAuthorSecId;
         private String awTitle;
         private LocalDateTime awCreateTime;
         private String awCoverUrl;
+    }
+
+    @Data
+    public static class Author {
+        private Integer id;
+        private String nickname;
+        private String avatarUrl;
     }
 }

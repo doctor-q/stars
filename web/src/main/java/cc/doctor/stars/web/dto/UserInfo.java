@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -31,6 +30,15 @@ public class UserInfo {
         this.role = users.getRole();
         this.childGender = users.getChildGender();
         this.childBirth = users.getChildBirth();
+    }
+
+    public UserInfo(UserInfo userInfo) {
+        this.avatar = userInfo.getAvatar();
+        this.avatarUrl = userInfo.getAvatarUrl();
+        this.nickname = userInfo.getNickname();
+        this.role = userInfo.getRole();
+        this.childGender = userInfo.getChildGender();
+        this.childBirth = userInfo.getChildBirth();
     }
 
     public Users toUsers() {

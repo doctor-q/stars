@@ -6,8 +6,10 @@ import cc.doctor.stars.web.dto.common.Response;
 import cc.doctor.stars.web.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class UserController {
@@ -48,7 +50,7 @@ public class UserController {
     }
 
     @GetMapping("user/info")
-    public Response<UserInfo> getUser() {
+    public Response<UserInfo> getUser() throws BusinessException {
         return userService.getUser();
     }
 
@@ -56,7 +58,7 @@ public class UserController {
      * 更新用户
      */
     @PostMapping("user/update")
-    public Response<?> updateUser(@RequestBody @Validated UserInfo request) throws BusinessException {
+    public Response<?> updateUser(@RequestBody @Validated UserInfo request) {
         return userService.updateUser(request);
     }
 
@@ -64,8 +66,8 @@ public class UserController {
      * 详情信息
      */
     @GetMapping("user/detail")
-    public Response<UserDetailResponse> userDetail() {
-        return null;
+    public Response<UserDetailResponse> userDetail() throws BusinessException {
+        return userService.getUserDetail();
     }
 
     /**

@@ -10,6 +10,8 @@ import cc.doctor.stars.biz.model.Users;
 import cc.doctor.stars.biz.model.VerifyCode;
 import cc.doctor.stars.biz.store.StoreFactory;
 import cc.doctor.stars.web.dto.*;
+import cc.doctor.stars.web.dto.common.PageRequest;
+import cc.doctor.stars.web.dto.common.PageResponse;
 import cc.doctor.stars.web.dto.common.Response;
 import cc.doctor.stars.web.filter.RequestContext;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -44,7 +46,10 @@ public class UserService {
     private FileMapper fileMapper;
 
     @Autowired
-    private FileService fileService;
+    private RsService rsService;
+
+    @Autowired
+    private AuthorService authorService;
 
     public Response<LoginResponse> login(LoginRequest request) throws BusinessException {
         Users users = usersMapper.selectOne(new QueryWrapper<Users>().eq("email", request.getEmail()).eq("password", request.getPassword()));
@@ -108,7 +113,7 @@ public class UserService {
         return Response.success();
     }
 
-    public Response<?> updateUser(UserInfo request) throws BusinessException {
+    public Response<?> updateUser(UserInfo request) {
         Users users = request.toUsers();
         Integer userId = requestContext.getUserId();
         users.setId(userId);
@@ -116,11 +121,15 @@ public class UserService {
         return Response.success();
     }
 
-    public Response<UserInfo> getUser() {
+    public Response<UserInfo> getUser() throws BusinessException {
+        return Response.success(getUserInfo());
+    }
+
+    private UserInfo getUserInfo() throws BusinessException {
         Integer userId = requestContext.getUserId();
         Users users = usersMapper.selectById(userId);
         if (users == null) {
-            return Response.fail(BusinessException.INVALID_TOKEN, "账号错误");
+            throw new BusinessException(BusinessException.INVALID_TOKEN, "账号错误");
         }
         UserInfo userInfo = new UserInfo(users);
         if (users.getAvatar() != null) {
@@ -128,6 +137,22 @@ public class UserService {
             String url = StoreFactory.createUrl(file);
             userInfo.setAvatarUrl(url);
         }
-        return Response.success(userInfo);
+        return userInfo;
+    }
+
+    public Response<UserDetailResponse> getUserDetail() throws BusinessException {
+        UserInfo userInfo = getUserInfo();
+        UserDetailResponse userDetail = new UserDetailResponse(userInfo);
+        // 收藏
+        PageRequest<?> pageRequest = PageRequest.pageRequest(1, 20);
+        PageResponse<RsCollectResponse> pageCollectRs = rsService.pageCollectRs(pageRequest);
+        userDetail.setRsCollectPage(pageCollectRs);
+        // 历史
+        PageResponse<RsHisResponse> pageRsHistory = rsService.pageRsHistory(pageRequest);
+        userDetail.setRsHisPage(pageRsHistory);
+        // 关注
+        PageResponse<AuthorResponse> pageFollow = authorService.pageFollow(pageRequest);
+        userDetail.setFollowPage(pageFollow);
+        return Response.success(userDetail);
     }
 }

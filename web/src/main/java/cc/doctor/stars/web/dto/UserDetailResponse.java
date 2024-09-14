@@ -1,23 +1,40 @@
 package cc.doctor.stars.web.dto;
 
+import cc.doctor.stars.biz.enums.RoleEnum;
+import cc.doctor.stars.biz.model.Users;
+import cc.doctor.stars.web.dto.common.PageResponse;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDate;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class UserDetailResponse {
-    private String avatar;
-    private String nickname;
-    private Integer role;
+@NoArgsConstructor
+public class UserDetailResponse extends UserInfo {
     private String roleName;
-    private Date birth;
-    private Integer gender;
-    private String ageYearMonth;
+    private String childAge;
 
-    private Integer collectCount;
-    private List<RsCollectResponse> rsCollectList;
-    private List<RsHisResponse> rsHisList;
-    private Integer followCount;
-    private List<AuthorResponse> followList;
+    private PageResponse<RsCollectResponse> rsCollectPage;
+    private PageResponse<RsHisResponse> rsHisPage;
+    private PageResponse<AuthorResponse> followPage;
+
+    public UserDetailResponse(Users users) {
+        super(users);
+        this.roleName = RoleEnum.getName(users.getRole());
+        this.childAge = ageYearMonth(users.getChildBirth());
+    }
+
+    public UserDetailResponse(UserInfo userInfo) {
+        super(userInfo);
+        this.roleName = RoleEnum.getName(userInfo.getRole());
+        this.childAge = ageYearMonth(userInfo.getChildBirth());
+    }
+
+    private String ageYearMonth(LocalDate localDate) {
+        LocalDate now = LocalDate.now();
+        int months = now.getYear() * 12 + now.getMonthValue() - (localDate.getYear() * 12 + localDate.getMonthValue());
+        return String.format("%d岁%d月", months / 12, months % 12);
+    }
 }

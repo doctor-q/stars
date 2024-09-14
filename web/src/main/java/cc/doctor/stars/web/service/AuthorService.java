@@ -8,6 +8,7 @@ import cc.doctor.stars.biz.model.RsAuthor;
 import cc.doctor.stars.biz.model.RsAuthorFollow;
 import cc.doctor.stars.web.dto.AuthorDetailResponse;
 import cc.doctor.stars.web.dto.AuthorFollowRequest;
+import cc.doctor.stars.web.dto.AuthorFollowResponse;
 import cc.doctor.stars.web.dto.AuthorResponse;
 import cc.doctor.stars.web.dto.common.PageRequest;
 import cc.doctor.stars.web.dto.common.PageResponse;
@@ -19,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -66,5 +69,17 @@ public class AuthorService {
 
     public Response<AuthorDetailResponse> getAuthorDetail(Integer authorId) {
         return null;
+    }
+
+    public PageResponse<AuthorResponse> pageFollow(PageRequest<?> request) {
+        Page<RsAuthorFollow> followPage = authorFollowMapper.selectPage(request.toPage(), new LambdaQueryWrapper<RsAuthorFollow>()
+                .eq(RsAuthorFollow::getUserId, requestContext.getUserId()).eq(RsAuthorFollow::getFollowStatus, YesOrNoEnum.YES.getValue()).orderByDesc(RsAuthorFollow::getFollowTime));
+        List<Integer> authorIds = followPage.getRecords().stream().map(RsAuthorFollow::getAuthorId).collect(Collectors.toList());
+        if (authorIds.isEmpty()) {
+            return PageResponse.pageResponse(followPage);
+        }
+        List<RsAuthor> rsAuthors = authorMapper.selectBatchIds(authorIds);
+        Map<Integer, RsAuthor> authorMap = rsAuthors.stream().collect(Collectors.toMap(RsAuthor::getId, v -> v));
+        return PageResponse.pageResponse(followPage, followPage.getRecords().stream().map(f -> new AuthorFollowResponse(authorMap.get(f.getAuthorId()), f)).collect(Collectors.toList()));
     }
 }

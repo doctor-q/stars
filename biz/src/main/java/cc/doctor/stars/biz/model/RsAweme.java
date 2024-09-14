@@ -123,28 +123,10 @@ public class RsAweme implements Serializable {
     private String awCoverUrl;
 
     /**
-     * 作者uid
-     */
-    @TableField("aw_au_uid")
-    private String awAuUid;
-
-    /**
-     * 作者昵称
-     */
-    @TableField("aw_au_nickname")
-    private String awAuNickname;
-
-    /**
-     * 作者加密uid
-     */
-    @TableField("aw_au_sec_uid")
-    private String awAuSecUid;
-
-    /**
      * 是否置顶
      */
     @TableField("is_top")
-    private Byte isTop;
+    private Integer isTop;
 
     /**
      * 创建时间
