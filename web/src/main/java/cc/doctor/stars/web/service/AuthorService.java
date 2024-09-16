@@ -36,13 +36,20 @@ public class AuthorService {
     @Autowired
     private RequestContext requestContext;
 
-    public PageResponse<AuthorResponse> searchAuthorPage(PageRequest<String> request) {
-        Page<RsAuthor> page = new Page<>(request.offset(), request.limit());
-        Page<RsAuthor> p = authorMapper.selectPage(page, new LambdaQueryWrapper<RsAuthor>().like(StringUtils.isEmpty(request.getData()), RsAuthor::getNickName, request.getData()));
-        return PageResponse.pageResponse(p, p.getRecords().stream().map(AuthorResponse::new).collect(Collectors.toList()));
+    public PageResponse<AuthorFollowResponse> searchAuthorPage(PageRequest<String> request) {
+        Page<RsAuthor> p = authorMapper.selectPage(request.toPage(), new LambdaQueryWrapper<RsAuthor>()
+                .like(!StringUtils.isEmpty(request.getData()), RsAuthor::getNickName, request.getData()));
+        List<RsAuthor> records = p.getRecords();
+        if (records.isEmpty()) {
+            return PageResponse.pageResponse(p);
+        }
+        List<RsAuthorFollow> authorFollows = authorFollowMapper.selectList(new LambdaQueryWrapper<RsAuthorFollow>().eq(RsAuthorFollow::getUserId, requestContext.getUserId())
+                .in(RsAuthorFollow::getAuthorId, records.stream().map(RsAuthor::getId).collect(Collectors.toList())));
+        Map<Integer, RsAuthorFollow> followMap = authorFollows.stream().collect(Collectors.toMap(RsAuthorFollow::getAuthorId, v -> v));
+        return PageResponse.pageResponse(p, records.stream().map(author -> new AuthorFollowResponse(author, followMap.get(author.getId()))).collect(Collectors.toList()));
     }
 
-    public Response<?> followAuthor(AuthorFollowRequest request) throws BusinessException {
+    public Response<Integer> followAuthor(AuthorFollowRequest request) throws BusinessException {
         RsAuthorFollow authorFollow = authorFollowMapper.selectOne(new LambdaQueryWrapper<RsAuthorFollow>()
                 .eq(RsAuthorFollow::getAuthorId, request.getAuthorId()).eq(RsAuthorFollow::getUserId, requestContext.getUserId()));
         // 关注
@@ -64,7 +71,7 @@ public class AuthorService {
                 authorFollowMapper.updateById(request.update(authorFollow.getId()));
             }
         }
-        return Response.success();
+        return Response.success(request.getAuthorId());
     }
 
     public Response<AuthorDetailResponse> getAuthorDetail(Integer authorId) {

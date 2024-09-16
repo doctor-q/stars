@@ -1,6 +1,7 @@
 package cc.doctor.stars.web.dto;
 
 import cc.doctor.stars.biz.model.Resources;
+import cc.doctor.stars.biz.model.RsAuthor;
 import cc.doctor.stars.biz.model.RsAweme;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,10 @@ public class RsResponse {
     private Aweme aweme;
     private Author author;
 
+    public RsResponse(Resources resources) {
+        this(resources, null);
+    }
+
     public RsResponse(Resources resources, RsAweme rsAweme) {
         this.id = resources.getId();
         this.rsType = resources.getRsType();
@@ -26,28 +31,40 @@ public class RsResponse {
         if (rsAweme != null) {
             aweme = new Aweme();
             aweme.setAuthorId(rsAweme.getAuthorId());
-            aweme.setAwAuthorNickname(rsAweme.getAwAuNickname());
-            aweme.setAwAuthorSecId(rsAweme.getAwAuSecUid());
             aweme.setAwTitle(rsAweme.getAwTitle());
             aweme.setAwCreateTime(LocalDateTime.ofEpochSecond(rsAweme.getAwCreateTime(), 0, ZoneOffset.ofHours(8)));
             aweme.setAwCoverUrl(rsAweme.getAwCoverUrl());
         }
     }
 
+    public RsResponse(RsResponse rsResponse) {
+        this.id = rsResponse.id;
+        this.rsType = rsResponse.rsType;
+        this.rsMimeType = rsResponse.rsMimeType;
+        this.rsUri = rsResponse.rsUri;
+        this.aweme = rsResponse.aweme;
+        this.author = rsResponse.author;
+    }
+
     @Data
     public static class Aweme {
         private Integer authorId;
-        private String awAuthorNickname;
-        private String awAuthorSecId;
         private String awTitle;
         private LocalDateTime awCreateTime;
         private String awCoverUrl;
     }
 
     @Data
+    @NoArgsConstructor
     public static class Author {
         private Integer id;
         private String nickname;
         private String avatarUrl;
+
+        public Author(RsAuthor author) {
+            this.id = author.getId();
+            this.nickname = author.getNickName();
+            this.avatarUrl = author.getAvatarUrl();
+        }
     }
 }

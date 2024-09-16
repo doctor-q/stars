@@ -1,7 +1,5 @@
 package cc.doctor.stars.web.dto;
 
-import cc.doctor.stars.biz.model.Resources;
-import cc.doctor.stars.biz.model.RsAweme;
 import cc.doctor.stars.biz.model.RsHistory;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -15,8 +13,8 @@ import java.time.LocalDateTime;
 public class RsHisResponse extends RsResponse {
     private LocalDateTime viewTime;
 
-    public RsHisResponse(RsHistory rsHistory, Resources resources, RsAweme rsAweme) {
-        super(resources, rsAweme);
+    public RsHisResponse(RsHistory rsHistory, RsResponse rsResponse) {
+        super(rsResponse);
         this.viewTime = rsHistory.getCreateTime();
     }
 }

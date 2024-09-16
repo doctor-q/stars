@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Collections;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
@@ -27,13 +28,6 @@ public class PageResponse<T> extends Response<List<T>> {
     }
 
     public static <D> PageResponse<D> pageResponse(IPage<?> page) {
-        PageResponse<D> pageResponse = new PageResponse<>();
-        pageResponse.setCode(Response.SUCCESS_CODE);
-        pageResponse.setSuccess(true);
-        pageResponse.setPageNo((int) page.getCurrent());
-        pageResponse.setPageSize((int) page.getSize());
-        pageResponse.setTotal((int) page.getTotal());
-        pageResponse.setPages((int) page.getPages());
-        return pageResponse;
+        return pageResponse(page, Collections.emptyList());
     }
 }

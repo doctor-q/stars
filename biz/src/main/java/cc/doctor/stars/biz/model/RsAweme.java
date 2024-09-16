@@ -117,6 +117,24 @@ public class RsAweme implements Serializable {
     private Integer awVPlaySize;
 
     /**
+     * 视频宽度
+     */
+    @TableField("aw_v_width")
+    private Integer awVWidth;
+
+    /**
+     * 视频高度
+     */
+    @TableField("aw_v_height")
+    private Integer awVHeight;
+
+    /**
+     * 时长
+     */
+    @TableField("aw_v_duration")
+    private Integer awVDuration;
+
+    /**
      * 封面地址
      */
     @TableField("aw_cover_url")

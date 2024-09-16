@@ -316,36 +316,47 @@ public class AwemeResponse {
 
     @Data
     public static class Aweme_list {
+        // id
         private String aweme_id;
 
+        // 标题
         private String desc;
 
+        // 创建时间，秒
         private long create_time;
 
+        // 作者信息
         private Author author;
 
+        // 音乐信息
         private Music music;
 
         private int friend_interaction;
 
+        // 视频信息
         private Video video;
 
+        // 分享地址
         private String share_url;
 
         private int user_digged;
 
+        // 统计信息
         private Statistics statistics;
 
+        // 状态信息
         private Status status;
 
         private int collection_corner_mark;
 
         private List<Text_extra> text_extra;
 
+        // 是否置顶
         private int is_top;
 
         private String ref_voice_modify_id_list;
 
+        // 分享信息
         private Share_info share_info;
 
         private int original;
@@ -386,8 +397,10 @@ public class AwemeResponse {
 
         private int boost_status;
 
+        // 媒体类型
         private int media_type;
 
+        // 地区：CN
         private String region;
 
         private String video_text;
@@ -402,6 +415,7 @@ public class AwemeResponse {
 
         private String group_id;
 
+        // 禁止下载
         private boolean prevent_download;
 
         private String nickname_position;
@@ -436,8 +450,10 @@ public class AwemeResponse {
 
         private boolean is_use_music;
 
+        // 视频控制
         private Video_control video_control;
 
+        // 抖音控制
         private Aweme_control aweme_control;
 
         private String item_title;
@@ -458,11 +474,11 @@ public class AwemeResponse {
 
         private int is_story;
 
+        private int is_24_story;
+
         private String authentication_token;
 
         private int author_mask_tag;
-
-        private int is_24_story;
 
         private String cover_labels;
 
@@ -545,6 +561,9 @@ public class AwemeResponse {
             aweme.setAwVPlayUrl(CollectUtils.join(aweme_list.video.getPlay_addr().getUrl_list()));
             aweme.setAwVPlayUri(aweme_list.video.getPlay_addr().getUri());
             aweme.setAwVPlaySize(aweme_list.video.getPlay_addr().getData_size());
+            aweme.setAwVDuration(aweme_list.video.getDuration());
+            aweme.setAwVWidth(aweme_list.video.getWidth());
+            aweme.setAwVHeight(aweme_list.video.getHeight());
             aweme.setAwCoverUrl(CollectUtils.join(aweme_list.video.getCover().getUrl_list()));
             aweme.setIsTop(aweme_list.is_top);
             return aweme;
@@ -566,6 +585,9 @@ public class AwemeResponse {
     // 最大游标
     private long max_cursor;
 
+    // 请求游标
+    private long request_item_cursor;
+
     // 是否有更多
     private int has_more;
 
@@ -576,9 +598,6 @@ public class AwemeResponse {
     private List<String> time_list;
 
     private Log_pb log_pb;
-
-    // 请求游标
-    private long request_item_cursor;
 
     private int post_serial;
 

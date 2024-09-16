@@ -16,8 +16,8 @@ import java.util.Date;
 public class RsCollectResponse extends RsResponse {
     private LocalDateTime collectTime;
 
-    public RsCollectResponse(RsCollect rsCollect, Resources resources, RsAweme rsAweme) {
-        super(resources, rsAweme);
+    public RsCollectResponse(RsCollect rsCollect, RsResponse rsResponse) {
+        super(rsResponse);
         this.collectTime = rsCollect.getCollectTime();
     }
 }

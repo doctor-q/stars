@@ -2,7 +2,9 @@ package cc.doctor.stars.web.controller;
 
 import cc.doctor.stars.biz.exception.BusinessException;
 import cc.doctor.stars.web.dto.RsCollectRequest;
+import cc.doctor.stars.web.dto.RsCollectResponse;
 import cc.doctor.stars.web.dto.RsDetailResponse;
+import cc.doctor.stars.web.dto.RsHisResponse;
 import cc.doctor.stars.web.dto.common.PageRequest;
 import cc.doctor.stars.web.dto.common.PageResponse;
 import cc.doctor.stars.web.dto.common.Response;
@@ -22,9 +24,11 @@ public class RsController {
 
     /**
      * 收藏资源
+     *
+     * @return 资源id
      */
     @PostMapping("collect")
-    public Response<?> collectRs(@RequestBody @Validated RsCollectRequest request) throws BusinessException {
+    public Response<Integer> collectRs(@RequestBody @Validated RsCollectRequest request) throws BusinessException {
         return rsService.collectRs(request);
     }
 
@@ -32,7 +36,7 @@ public class RsController {
      * 收藏列表
      */
     @GetMapping("collect/page")
-    public PageResponse<?> pageCollectRs(PageRequest<?> request) {
+    public PageResponse<RsCollectResponse> pageCollectRs(PageRequest<?> request) {
         return rsService.pageCollectRs(request);
     }
 
@@ -40,7 +44,7 @@ public class RsController {
      * 资源历史
      */
     @GetMapping("history/page")
-    public PageResponse<?> pageRsHistory(PageRequest<?> request) {
+    public PageResponse<RsHisResponse> pageRsHistory(PageRequest<?> request) {
         return rsService.pageRsHistory(request);
     }
 
@@ -48,7 +52,23 @@ public class RsController {
      * 资源详情
      */
     @GetMapping("detail")
-    public Response<RsDetailResponse> rsDetail(@RequestParam Integer resId) {
+    public Response<RsDetailResponse> rsDetail(@RequestParam Integer resId) throws BusinessException {
         return rsService.rsDetail(resId);
+    }
+
+    /**
+     * 推荐
+     */
+    @GetMapping("recommend")
+    public Response<RsDetailResponse> recommend() throws BusinessException {
+        return rsService.recommend();
+    }
+
+    /**
+     * 关注
+     */
+    @GetMapping("follow")
+    public Response<RsDetailResponse> follow() throws BusinessException {
+        return rsService.follow();
     }
 }
