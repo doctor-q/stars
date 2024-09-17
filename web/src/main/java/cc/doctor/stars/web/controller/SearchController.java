@@ -1,5 +1,6 @@
 package cc.doctor.stars.web.controller;
 
+import cc.doctor.stars.web.dto.RsResponse;
 import cc.doctor.stars.web.dto.SearchHisResponse;
 import cc.doctor.stars.web.dto.common.PageRequest;
 import cc.doctor.stars.web.dto.common.PageResponse;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("rs/search")
+@RequestMapping("search")
 public class SearchController {
 
     @Autowired
@@ -41,5 +42,13 @@ public class SearchController {
     @GetMapping("others")
     public Response<List<String>> searchOthers() {
         return searchService.searchOthers();
+    }
+
+    /**
+     * 资源搜索
+     */
+    @GetMapping("rs")
+    public Response<List<RsResponse>> searchResource(String keywords, Integer size) {
+        return searchService.searchResource(keywords, size);
     }
 }

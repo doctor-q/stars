@@ -151,7 +151,7 @@ public class UserService {
         PageResponse<RsHisResponse> pageRsHistory = rsService.pageRsHistory(pageRequest);
         userDetail.setRsHisPage(pageRsHistory);
         // 关注
-        PageResponse<AuthorResponse> pageFollow = authorService.pageFollow(pageRequest);
+        PageResponse<AuthorFollowResponse> pageFollow = authorService.pageFollow(pageRequest);
         userDetail.setFollowPage(pageFollow);
         return Response.success(userDetail);
     }

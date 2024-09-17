@@ -7,12 +7,13 @@
         <id column="id" property="id" />
         <result column="user_id" property="userId" />
         <result column="keywords" property="keywords" />
+        <result column="expired" property="expired" />
         <result column="create_time" property="createTime" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, user_id, keywords, create_time
+        id, user_id, keywords, expired, create_time
     </sql>
 
 </mapper>

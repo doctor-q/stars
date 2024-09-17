@@ -78,7 +78,7 @@ public class AuthorService {
         return null;
     }
 
-    public PageResponse<AuthorResponse> pageFollow(PageRequest<?> request) {
+    public PageResponse<AuthorFollowResponse> pageFollow(PageRequest<?> request) {
         Page<RsAuthorFollow> followPage = authorFollowMapper.selectPage(request.toPage(), new LambdaQueryWrapper<RsAuthorFollow>()
                 .eq(RsAuthorFollow::getUserId, requestContext.getUserId()).eq(RsAuthorFollow::getFollowStatus, YesOrNoEnum.YES.getValue()).orderByDesc(RsAuthorFollow::getFollowTime));
         List<Integer> authorIds = followPage.getRecords().stream().map(RsAuthorFollow::getAuthorId).collect(Collectors.toList());

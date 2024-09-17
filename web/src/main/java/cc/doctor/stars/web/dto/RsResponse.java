@@ -24,16 +24,18 @@ public class RsResponse {
     }
 
     public RsResponse(Resources resources, RsAweme rsAweme) {
+        this(resources, rsAweme, null);
+    }
+    public RsResponse(Resources resources, RsAweme rsAweme, RsAuthor author) {
         this.id = resources.getId();
         this.rsType = resources.getRsType();
         this.rsMimeType = resources.getRsMimeType();
         this.rsUri = resources.getRsUri();
         if (rsAweme != null) {
-            aweme = new Aweme();
-            aweme.setAuthorId(rsAweme.getAuthorId());
-            aweme.setAwTitle(rsAweme.getAwTitle());
-            aweme.setAwCreateTime(LocalDateTime.ofEpochSecond(rsAweme.getAwCreateTime(), 0, ZoneOffset.ofHours(8)));
-            aweme.setAwCoverUrl(rsAweme.getAwCoverUrl());
+            aweme = new Aweme(rsAweme);
+        }
+        if (author != null) {
+            this.author = new Author(author);
         }
     }
 
@@ -47,11 +49,19 @@ public class RsResponse {
     }
 
     @Data
+    @NoArgsConstructor
     public static class Aweme {
         private Integer authorId;
         private String awTitle;
         private LocalDateTime awCreateTime;
         private String awCoverUrl;
+
+        public Aweme(RsAweme aweme) {
+            this.authorId = aweme.getAuthorId();
+            this.awTitle = aweme.getAwTitle();
+            this.awCreateTime = LocalDateTime.ofEpochSecond(aweme.getAwCreateTime(), 0, ZoneOffset.ofHours(8));
+            this.awCoverUrl = aweme.getAwCoverUrl();
+        }
     }
 
     @Data

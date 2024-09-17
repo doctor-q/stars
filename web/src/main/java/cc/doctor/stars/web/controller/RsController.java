@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("rs")
 @Validated
@@ -60,7 +62,7 @@ public class RsController {
      * 推荐
      */
     @GetMapping("recommend")
-    public Response<RsDetailResponse> recommend() throws BusinessException {
+    public Response<List<RsDetailResponse>> recommend() throws BusinessException {
         return rsService.recommend();
     }
 
@@ -68,7 +70,7 @@ public class RsController {
      * 关注
      */
     @GetMapping("follow")
-    public Response<RsDetailResponse> follow() throws BusinessException {
+    public Response<List<RsDetailResponse>> follow() throws BusinessException {
         return rsService.follow();
     }
 }

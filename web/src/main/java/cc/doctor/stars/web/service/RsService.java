@@ -73,7 +73,7 @@ public class RsService {
             return Collections.emptyMap();
         }
         List<Resources> resources = resourcesMapper.selectBatchIds(rsIds);
-        List<RsAweme> rsAwemes = rsAwemeMapper.selectList(new LambdaQueryWrapper<RsAweme>().eq(RsAweme::getRsId, rsIds));
+        List<RsAweme> rsAwemes = rsAwemeMapper.selectList(new LambdaQueryWrapper<RsAweme>().in(RsAweme::getRsId, rsIds));
         Map<Integer, RsAweme> awemeMap = rsAwemes.stream().collect(Collectors.toMap(RsAweme::getRsId, v -> v));
         Map<Integer, RsAuthor> authorMap = Collections.emptyMap();
         if (!rsAwemes.isEmpty()) {
@@ -110,6 +110,10 @@ public class RsService {
     }
 
     public Response<RsDetailResponse> rsDetail(Integer resId) throws BusinessException {
+        return Response.success(getRsDetail(resId));
+    }
+
+    private RsDetailResponse getRsDetail(Integer resId) throws BusinessException {
         Resources resources = resourcesMapper.selectById(resId);
         if (resources == null) {
             throw new BusinessException(BusinessException.INVALID_INPUT_CODE, "资源错误！");
@@ -129,14 +133,14 @@ public class RsService {
                 rsDetailResponse.setFollowStatus(rsAuthorFollow == null ? YesOrNoEnum.NO.getValue() : rsAuthorFollow.getFollowStatus());
             }
         }
-        return Response.success(rsDetailResponse);
+        return rsDetailResponse;
     }
 
-    public Response<RsDetailResponse> recommend() throws BusinessException {
-        return rsDetail(1);
+    public Response<List<RsDetailResponse>> recommend() throws BusinessException {
+        return Response.success(Collections.singletonList(getRsDetail(1)));
     }
 
-    public Response<RsDetailResponse> follow() throws BusinessException {
-        return rsDetail(2);
+    public Response<List<RsDetailResponse>> follow() throws BusinessException {
+        return Response.success(Collections.singletonList(getRsDetail(2)));
     }
 }

@@ -18,7 +18,7 @@ public class UserDetailResponse extends UserInfo {
 
     private PageResponse<RsCollectResponse> rsCollectPage;
     private PageResponse<RsHisResponse> rsHisPage;
-    private PageResponse<AuthorResponse> followPage;
+    private PageResponse<AuthorFollowResponse> followPage;
 
     public UserDetailResponse(Users users) {
         super(users);

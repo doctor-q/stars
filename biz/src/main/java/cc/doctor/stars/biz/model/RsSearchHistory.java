@@ -45,6 +45,12 @@ public class RsSearchHistory implements Serializable {
     private String keywords;
 
     /**
+     * 是否过期
+     */
+    @TableField("expired")
+    private Integer expired;
+
+    /**
      * 创建时间
      */
     @TableField("create_time")
