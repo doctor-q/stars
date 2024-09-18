@@ -7,6 +7,7 @@
         <id column="id" property="id" />
         <result column="rs_type" property="rsType" />
         <result column="rs_mime_type" property="rsMimeType" />
+        <result column="author_id" property="authorId" />
         <result column="rs_uri" property="rsUri" />
         <result column="rs_store_uri" property="rsStoreUri" />
         <result column="create_time" property="createTime" />
@@ -15,7 +16,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, rs_type, rs_mime_type, rs_uri, rs_store_uri, create_time, update_time
+        id, rs_type, rs_mime_type, author_id, rs_uri, rs_store_uri, create_time, update_time
     </sql>
 
 </mapper>

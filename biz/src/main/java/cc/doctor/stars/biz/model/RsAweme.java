@@ -39,12 +39,6 @@ public class RsAweme implements Serializable {
     private Integer rsId;
 
     /**
-     * 作者id
-     */
-    @TableField("author_id")
-    private Integer authorId;
-
-    /**
      * 短视频id
      */
     @TableField("aweme_id")

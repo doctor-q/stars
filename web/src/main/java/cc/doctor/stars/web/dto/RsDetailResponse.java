@@ -1,6 +1,7 @@
 package cc.doctor.stars.web.dto;
 
 import cc.doctor.stars.biz.model.Resources;
+import cc.doctor.stars.biz.model.RsAuthor;
 import cc.doctor.stars.biz.model.RsAweme;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,7 +19,7 @@ public class RsDetailResponse extends RsResponse {
     private Integer followStatus;
     private AwemeDetail awemeDetail;
 
-    public RsDetailResponse(Resources resources, RsAweme aweme) {
+    public RsDetailResponse(Resources resources, RsAweme aweme, RsAuthor author) {
         super(resources);
         if (aweme != null) {
             this.awemeDetail = new AwemeDetail();
@@ -27,12 +28,11 @@ public class RsDetailResponse extends RsResponse {
             this.awemeDetail.setHeight(aweme.getAwVHeight());
             this.awemeDetail.setDuration(aweme.getAwVDuration());
             this.awemeDetail.setPlayUrl(aweme.getAwVPlayUrl());
-            this.awemeDetail.setAuthorId(aweme.getAuthorId());
             this.awemeDetail.setAwTitle(aweme.getAwTitle());
             this.awemeDetail.setAwCreateTime(LocalDateTime.ofEpochSecond(aweme.getAwCreateTime(), 0, ZoneOffset.ofHours(8)));
             this.awemeDetail.setAwCoverUrl(aweme.getAwCoverUrl());
         }
-
+        setAuthor(new Author(author));
     }
 
     @EqualsAndHashCode(callSuper = true)

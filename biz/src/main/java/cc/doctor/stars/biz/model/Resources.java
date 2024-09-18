@@ -45,6 +45,12 @@ public class Resources implements Serializable {
     private Integer rsMimeType;
 
     /**
+     * 作者id
+     */
+    @TableField("author_id")
+    private Integer authorId;
+
+    /**
      * 资源路径
      */
     @TableField("rs_uri")

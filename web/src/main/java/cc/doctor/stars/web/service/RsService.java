@@ -69,27 +69,25 @@ public class RsService {
         return Response.success(request.getResId());
     }
 
-    private Map<Integer, RsResponse> getRsResponses(List<Integer> rsIds) {
+    public Map<Integer, RsResponse> getRsResponseByIds(List<Integer> rsIds) {
         if (rsIds.isEmpty()) {
             return Collections.emptyMap();
         }
+
         List<Resources> resources = resourcesMapper.selectBatchIds(rsIds);
+        return getRsResponses(resources);
+    }
+
+    private Map<Integer, RsResponse> getRsResponses(List<Resources> resources) {
+        if (CollectionUtils.isEmpty(resources)) {
+            return Collections.emptyMap();
+        }
+        List<Integer> rsIds = resources.stream().map(Resources::getId).collect(Collectors.toList());
         List<RsAweme> rsAwemes = rsAwemeMapper.selectList(new LambdaQueryWrapper<RsAweme>().in(RsAweme::getRsId, rsIds));
         Map<Integer, RsAweme> awemeMap = rsAwemes.stream().collect(Collectors.toMap(RsAweme::getRsId, v -> v));
-        Map<Integer, RsAuthor> authorMap = Collections.emptyMap();
-        if (!rsAwemes.isEmpty()) {
-            List<RsAuthor> rsAuthors = rsAuthorMapper.selectBatchIds(rsAwemes.stream().map(RsAweme::getAuthorId).collect(Collectors.toList()));
-            authorMap = rsAuthors.stream().collect(Collectors.toMap(RsAuthor::getId, v -> v));
-        }
-        Map<Integer, RsAuthor> finalAuthorMap = authorMap;
-        return resources.stream().collect(Collectors.toMap(Resources::getId, rs -> {
-            RsAweme aweme = awemeMap.get(rs.getId());
-            RsResponse rsResponse = new RsResponse(rs, aweme);
-            if (aweme != null) {
-                rsResponse.setAuthor(new RsResponse.Author(finalAuthorMap.get(aweme.getAuthorId())));
-            }
-            return rsResponse;
-        }));
+        List<RsAuthor> rsAuthors = rsAuthorMapper.selectBatchIds(resources.stream().map(Resources::getAuthorId).collect(Collectors.toList()));
+        Map<Integer, RsAuthor> authorMap = rsAuthors.stream().collect(Collectors.toMap(RsAuthor::getId, v -> v));
+        return resources.stream().collect(Collectors.toMap(Resources::getId, rs -> new RsResponse(rs, awemeMap.get(rs.getId()), authorMap.get(rs.getAuthorId()))));
     }
 
     public PageResponse<RsCollectResponse> pageCollectRs(PageRequest<?> request) {
@@ -97,7 +95,7 @@ public class RsService {
                 new LambdaQueryWrapper<RsCollect>().eq(RsCollect::getUserId, requestContext.getUserId())
                         .eq(RsCollect::getCollectStatus, YesOrNoEnum.YES.getValue()).orderByDesc(RsCollect::getCollectTime));
         List<Integer> rsIds = page.getRecords().stream().map(RsCollect::getRsId).collect(Collectors.toList());
-        Map<Integer, RsResponse> rsResponses = getRsResponses(rsIds);
+        Map<Integer, RsResponse> rsResponses = getRsResponseByIds(rsIds);
         return PageResponse.pageResponse(page, page.getRecords().stream().map(rsCollect -> new RsCollectResponse(rsCollect, rsResponses.get(rsCollect.getRsId()))).collect(Collectors.toList()));
     }
 
@@ -106,7 +104,7 @@ public class RsService {
                 new LambdaQueryWrapper<RsHistory>().eq(RsHistory::getUserId, requestContext.getUserId())
                         .orderByDesc(RsHistory::getCreateTime));
         List<Integer> rsIds = page.getRecords().stream().map(RsHistory::getRsId).collect(Collectors.toList());
-        Map<Integer, RsResponse> rsResponses = getRsResponses(rsIds);
+        Map<Integer, RsResponse> rsResponses = getRsResponseByIds(rsIds);
         return PageResponse.pageResponse(page, page.getRecords().stream().map(rsHistory -> new RsHisResponse(rsHistory, rsResponses.get(rsHistory.getId()))).collect(Collectors.toList()));
     }
 
@@ -120,17 +118,15 @@ public class RsService {
             throw new BusinessException(BusinessException.INVALID_INPUT_CODE, "资源错误！");
         }
         RsAweme aweme = rsAwemeMapper.selectOne(new LambdaQueryWrapper<RsAweme>().eq(RsAweme::getRsId, resId));
-        RsDetailResponse rsDetailResponse = new RsDetailResponse(resources, aweme);
-        if (aweme != null) {
-            RsAuthor rsAuthor = rsAuthorMapper.selectById(aweme.getAuthorId());
-            rsDetailResponse.setAuthor(new RsResponse.Author(rsAuthor));
-        }
+        RsAuthor rsAuthor = rsAuthorMapper.selectById(resources.getAuthorId());
+        RsDetailResponse rsDetailResponse = new RsDetailResponse(resources, aweme, rsAuthor);
         Integer userId = requestContext.getUserId();
         if (userId != null) {
             RsCollect rsCollect = rsCollectMapper.selectOne(new LambdaQueryWrapper<RsCollect>().eq(RsCollect::getUserId, userId).eq(RsCollect::getRsId, resId));
             rsDetailResponse.setCollectStatus(rsCollect == null ? YesOrNoEnum.NO.getValue() : rsCollect.getCollectStatus());
             if (aweme != null) {
-                RsAuthorFollow rsAuthorFollow = rsAuthorFollowMapper.selectOne(new LambdaQueryWrapper<RsAuthorFollow>().eq(RsAuthorFollow::getUserId, userId).eq(RsAuthorFollow::getAuthorId, aweme.getAuthorId()));
+                RsAuthorFollow rsAuthorFollow = rsAuthorFollowMapper.selectOne(new LambdaQueryWrapper<RsAuthorFollow>().eq(RsAuthorFollow::getUserId, userId)
+                        .eq(RsAuthorFollow::getAuthorId, resources.getAuthorId()));
                 rsDetailResponse.setFollowStatus(rsAuthorFollow == null ? YesOrNoEnum.NO.getValue() : rsAuthorFollow.getFollowStatus());
             }
         }
@@ -146,12 +142,8 @@ public class RsService {
     }
 
     public PageResponse<RsResponse> pageAuthorRs(PageRequest<Integer> pageRequest) {
-        Page<RsAweme> page = rsAwemeMapper.selectPage(pageRequest.toPage(), new LambdaQueryWrapper<RsAweme>().eq(RsAweme::getAuthorId, pageRequest.getData()));
-        if (CollectionUtils.isEmpty(page.getRecords())) {
-            return PageResponse.pageResponse(page);
-        }
-        List<Integer> rsIds = page.getRecords().stream().map(RsAweme::getRsId).collect(Collectors.toList());
-        Map<Integer, RsResponse> rsResponses = getRsResponses(rsIds);
-        return PageResponse.pageResponse(page, page.getRecords().stream().map(rsAweme -> rsResponses.get(rsAweme.getRsId())).collect(Collectors.toList()));
+        Page<Resources> page = resourcesMapper.selectPage(pageRequest.toPage(), new LambdaQueryWrapper<Resources>().eq(Resources::getAuthorId, pageRequest.getData()));
+        Map<Integer, RsResponse> rsResponses = getRsResponses(page.getRecords());
+        return PageResponse.pageResponse(page, page.getRecords().stream().map(resources -> rsResponses.get(resources.getId())).collect(Collectors.toList()));
     }
 }

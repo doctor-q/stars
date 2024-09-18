@@ -15,6 +15,7 @@ public class RsResponse {
     private Integer id;
     private Integer rsType;
     private Integer rsMimeType;
+    private Integer authorId;
     private String rsUri;
     private Aweme aweme;
     private Author author;
@@ -30,6 +31,7 @@ public class RsResponse {
         this.id = resources.getId();
         this.rsType = resources.getRsType();
         this.rsMimeType = resources.getRsMimeType();
+        this.authorId = resources.getAuthorId();
         this.rsUri = resources.getRsUri();
         if (rsAweme != null) {
             aweme = new Aweme(rsAweme);
@@ -43,6 +45,7 @@ public class RsResponse {
         this.id = rsResponse.id;
         this.rsType = rsResponse.rsType;
         this.rsMimeType = rsResponse.rsMimeType;
+        this.authorId = rsResponse.authorId;
         this.rsUri = rsResponse.rsUri;
         this.aweme = rsResponse.aweme;
         this.author = rsResponse.author;
@@ -51,13 +54,11 @@ public class RsResponse {
     @Data
     @NoArgsConstructor
     public static class Aweme {
-        private Integer authorId;
         private String awTitle;
         private LocalDateTime awCreateTime;
         private String awCoverUrl;
 
         public Aweme(RsAweme aweme) {
-            this.authorId = aweme.getAuthorId();
             this.awTitle = aweme.getAwTitle();
             this.awCreateTime = LocalDateTime.ofEpochSecond(aweme.getAwCreateTime(), 0, ZoneOffset.ofHours(8));
             this.awCoverUrl = aweme.getAwCoverUrl();
