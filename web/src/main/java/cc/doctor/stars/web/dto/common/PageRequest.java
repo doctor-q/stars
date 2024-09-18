@@ -24,6 +24,14 @@ public class PageRequest<T> {
         return request;
     }
 
+    public static <D> PageRequest<D> pageRequest(int pageNo, int pageSize, D data) {
+        PageRequest<D> request = new PageRequest<>();
+        request.setPageNo(pageNo);
+        request.setPageSize(pageSize);
+        request.setData(data);
+        return request;
+    }
+
     public int offset() {
         pageNo = (pageNo == null || pageNo <= 0) ? 1 : pageNo;
         return (pageNo - 1) * limit();

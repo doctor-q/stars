@@ -41,7 +41,7 @@ public class RsAuthor implements Serializable {
      * 资源来源类型
      */
     @TableField("rs_type")
-    private Byte rsType;
+    private Integer rsType;
 
     /**
      * 昵称

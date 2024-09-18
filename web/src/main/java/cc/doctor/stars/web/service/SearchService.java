@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -90,5 +91,12 @@ public class SearchService {
             searchHis.setKeywords(keywords);
             searchHistoryMapper.insert(searchHis);
         }
+    }
+
+    public Response<List<String>> searchSuggest(String keywords) {
+        List<String> list = new ArrayList<>();
+        list.add(keywords + "a");
+        list.add(keywords + "b");
+        return Response.success(list);
     }
 }

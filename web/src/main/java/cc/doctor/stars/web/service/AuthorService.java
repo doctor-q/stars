@@ -6,10 +6,7 @@ import cc.doctor.stars.biz.mapper.RsAuthorFollowMapper;
 import cc.doctor.stars.biz.mapper.RsAuthorMapper;
 import cc.doctor.stars.biz.model.RsAuthor;
 import cc.doctor.stars.biz.model.RsAuthorFollow;
-import cc.doctor.stars.web.dto.AuthorDetailResponse;
-import cc.doctor.stars.web.dto.AuthorFollowRequest;
-import cc.doctor.stars.web.dto.AuthorFollowResponse;
-import cc.doctor.stars.web.dto.AuthorResponse;
+import cc.doctor.stars.web.dto.*;
 import cc.doctor.stars.web.dto.common.PageRequest;
 import cc.doctor.stars.web.dto.common.PageResponse;
 import cc.doctor.stars.web.dto.common.Response;
@@ -35,6 +32,12 @@ public class AuthorService {
 
     @Autowired
     private RequestContext requestContext;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private RsService rsService;
 
     public PageResponse<AuthorFollowResponse> searchAuthorPage(PageRequest<String> request) {
         Page<RsAuthor> p = authorMapper.selectPage(request.toPage(), new LambdaQueryWrapper<RsAuthor>()
@@ -74,8 +77,22 @@ public class AuthorService {
         return Response.success(request.getAuthorId());
     }
 
-    public Response<AuthorDetailResponse> getAuthorDetail(Integer authorId) {
-        return null;
+    public Response<AuthorDetailResponse> getAuthorDetail(Integer authorId) throws BusinessException {
+        RsAuthor rsAuthor = authorMapper.selectById(authorId);
+        if (rsAuthor == null) {
+            throw new BusinessException(BusinessException.INVALID_INPUT_CODE, "作者错误");
+        }
+        AuthorDetailResponse authorDetailResponse = new AuthorDetailResponse(rsAuthor, requestContext.getUserId() == null ? null :
+                authorFollowMapper.selectOne(new LambdaQueryWrapper<RsAuthorFollow>().eq(RsAuthorFollow::getAuthorId, authorId).eq(RsAuthorFollow::getUserId, requestContext.getUserId())));
+        Page<RsAuthorFollow> page = authorFollowMapper.selectPage(new Page<>(1, 20), new LambdaQueryWrapper<RsAuthorFollow>()
+                .eq(RsAuthorFollow::getAuthorId, rsAuthor.getId()));
+        List<RsAuthorFollow> authorFollows = page.getRecords();
+        List<Integer> userIds = authorFollows.stream().map(RsAuthorFollow::getUserId).collect(Collectors.toList());
+        List<UserInfo> userInfos = userService.getUserInfos(userIds);
+        authorDetailResponse.setUserPage(PageResponse.pageResponse(page, userInfos));
+        PageResponse<RsResponse> rsResponsePageResponse = rsService.pageAuthorRs(PageRequest.pageRequest(1, 20, authorId));
+        authorDetailResponse.setRsPage(rsResponsePageResponse);
+        return Response.success(authorDetailResponse);
     }
 
     public PageResponse<AuthorFollowResponse> pageFollow(PageRequest<?> request) {

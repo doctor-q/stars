@@ -5,11 +5,13 @@ import cc.doctor.stars.biz.model.RsAuthor;
 import cc.doctor.stars.biz.model.RsAuthorFollow;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
+@NoArgsConstructor
 public class AuthorFollowResponse extends AuthorResponse {
     private Integer userId;
     private Integer followStatus;

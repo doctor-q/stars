@@ -19,10 +19,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.time.ZoneOffset;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -154,5 +155,28 @@ public class UserService {
         PageResponse<AuthorFollowResponse> pageFollow = authorService.pageFollow(pageRequest);
         userDetail.setFollowPage(pageFollow);
         return Response.success(userDetail);
+    }
+
+    public List<UserInfo> getUserInfos(List<Integer> userIds) {
+        if (CollectionUtils.isEmpty(userIds)) {
+            return Collections.emptyList();
+        }
+        List<Users> users = usersMapper.selectBatchIds(userIds);
+        List<UserInfo> userInfos = users.stream().map(UserInfo::new).collect(Collectors.toList());
+        List<Integer> avatars = users.stream().map(Users::getAvatar).filter(Objects::nonNull).collect(Collectors.toList());
+        if (!avatars.isEmpty()) {
+            List<File> files = fileMapper.selectBatchIds(avatars);
+            Map<Integer, String> urlMap = new HashMap<>();
+            files.forEach(file -> {
+                String url = StoreFactory.createUrl(file);
+                if (url != null) {
+                    urlMap.put(file.getId(), url);
+                }
+            });
+            userInfos.forEach(userInfo -> {
+                userInfo.setAvatarUrl(urlMap.get(userInfo.getAvatar()));
+            });
+        }
+        return userInfos;
     }
 }

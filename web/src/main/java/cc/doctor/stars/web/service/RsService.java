@@ -13,6 +13,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -142,5 +143,15 @@ public class RsService {
 
     public Response<List<RsDetailResponse>> follow() throws BusinessException {
         return Response.success(Collections.singletonList(getRsDetail(2)));
+    }
+
+    public PageResponse<RsResponse> pageAuthorRs(PageRequest<Integer> pageRequest) {
+        Page<RsAweme> page = rsAwemeMapper.selectPage(pageRequest.toPage(), new LambdaQueryWrapper<RsAweme>().eq(RsAweme::getAuthorId, pageRequest.getData()));
+        if (CollectionUtils.isEmpty(page.getRecords())) {
+            return PageResponse.pageResponse(page);
+        }
+        List<Integer> rsIds = page.getRecords().stream().map(RsAweme::getRsId).collect(Collectors.toList());
+        Map<Integer, RsResponse> rsResponses = getRsResponses(rsIds);
+        return PageResponse.pageResponse(page, page.getRecords().stream().map(rsAweme -> rsResponses.get(rsAweme.getRsId())).collect(Collectors.toList()));
     }
 }

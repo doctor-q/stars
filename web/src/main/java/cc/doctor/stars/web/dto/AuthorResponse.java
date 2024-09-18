@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 public class AuthorResponse {
     private Integer id;
     private String uid;
-    private Byte rsType;
+    private Integer rsType;
     private String nickName;
     private String description;
     private String avatarUrl;

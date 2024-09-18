@@ -51,4 +51,12 @@ public class SearchController {
     public Response<List<RsResponse>> searchResource(String keywords, Integer size) {
         return searchService.searchResource(keywords, size);
     }
+
+    /**
+     * suggest
+     */
+    @GetMapping("suggest")
+    public Response<List<String>> searchSuggest(String keywords) {
+        return searchService.searchSuggest(keywords);
+    }
 }

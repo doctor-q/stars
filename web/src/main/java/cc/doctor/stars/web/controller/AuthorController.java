@@ -43,7 +43,7 @@ public class AuthorController {
      * 作者详情
      */
     @GetMapping("detail")
-    public Response<AuthorDetailResponse> getAuthorDetail(@RequestParam Integer authorId) {
+    public Response<AuthorDetailResponse> getAuthorDetail(@RequestParam Integer authorId) throws BusinessException {
         return authorService.getAuthorDetail(authorId);
     }
 }
