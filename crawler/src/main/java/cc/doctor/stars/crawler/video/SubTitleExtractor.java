@@ -1,69 +1,73 @@
 package cc.doctor.stars.crawler.video;
 
 
+import cc.doctor.stars.crawler.utils.OcrUtils;
 import lombok.extern.slf4j.Slf4j;
-import net.sourceforge.tess4j.Tesseract;
-import net.sourceforge.tess4j.TesseractException;
-import org.bytedeco.opencv.opencv_core.Mat;
+import org.apache.commons.text.similarity.LevenshteinDistance;
+import org.springframework.util.StringUtils;
 
-import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.bytedeco.opencv.global.opencv_core.bitwise_not;
-import static org.bytedeco.opencv.global.opencv_imgcodecs.imread;
-import static org.bytedeco.opencv.global.opencv_imgcodecs.imwrite;
-import static org.bytedeco.opencv.global.opencv_imgproc.*;
 
 /**
  * 图片文字提取
  */
 @Slf4j
 public class SubTitleExtractor {
-    /**
-     * 二值化
-     *
-     * @param oriImg    输入图片
-     * @param outputImg 输出图片
-     */
-    public static void binarization(String oriImg, String outputImg) {
-        Mat img = imread(oriImg);
-        // 色彩空间转换，RGB转灰色
-        cvtColor(img, img, COLOR_RGB2GRAY);
-        // 二值化
-        threshold(img, img, 240, 255, THRESH_BINARY);
-        // 反转像素
-        bitwise_not(img, img);
-        // adaptiveThreshold(img, img, 255, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY_INV, 25, 10);
-        imwrite(outputImg, img);
+
+    public static List<String> extract(String dir) throws IOException {
+        return removeDup(extractFromPath(dir));
     }
 
-    public List<String> extractFromPath(String dir) throws IOException {
+    public static List<String> extractFromPath(String dir) throws IOException {
         List<String> extracts = new ArrayList<>();
-        Tesseract tesseract = new Tesseract();
-        tesseract.setDatapath("/usr/share/tesseract-ocr/4.00/tessdata");
-        tesseract.setLanguage("chi_sim");
-        Files.list(Paths.get(dir)).forEach(file -> {
-            try {
-                String binFilePath = file.getParent().toString() + "/bin-" + file.getFileName().toString();
-                binarization(file.toString(), binFilePath);
-                Rectangle rect = new Rectangle(0, 460, 576, 100);
-                String binOcr = tesseract.doOCR(new File(binFilePath), rect);
-                System.out.println(binOcr);
-//                extracts.add(ocr);
-            } catch (TesseractException e) {
-                log.error("文件{} OCR提取错误", file.toString(), e);
+        Files.list(Paths.get(dir)).map(Path::toString).sorted().forEach(file -> {
+            String result = OcrUtils.getResult(file);
+            if (StringUtils.isEmpty(result)) {
+                log.warn("文件{}识别质量太低", file);
+            } else {
+                extracts.add(result);
             }
         });
         return extracts;
     }
 
-    public static void main(String[] args) throws IOException {
-        List<String> strings = new SubTitleExtractor().extractFromPath("/home/doctor/Pictures/frames/test");
-        System.out.println(strings);
+    /**
+     * 去重、去标题等
+     * 去重：根据编辑距离以一个阈值判断是否相同字幕，取分值更高的文本作为解析文本
+     */
+    public static List<String> removeDup(List<String> extracts) {
+        List<String> results = new ArrayList<>();
+        for (String extract : extracts) {
+            if (results.isEmpty()) {
+                results.add(extract);
+            } else {
+                String prev = results.get(results.size() - 1);
+                if (!extract.equals(prev)) {
+                    results.add(extract);
+                }
+            }
+        }
+        // 去标题
+        return results;
     }
+
+    public static void main(String[] args) throws IOException {
+        List<String> strings = extractFromPath("/home/doctor/Pictures/frames/lyf.mp4");
+        System.out.println(strings);
+        List<String> strings1 = removeDup(strings);
+        System.out.println(strings1);
+//        String str1 = "接着朱刚鬣原形毕露, 甜兮";
+//        String str2 = "接着朱刚鬣原形毕露, 甜说居";
+//        int editDistance = LevenshteinDistance.getDefaultInstance().apply(str1, str2);
+//        double similarity = 1 - ((double) editDistance / Math.max(str1.length(), str2.length()));
+//
+//        System.out.println("commons-text 包：Edit Distance: " + editDistance);
+//        System.out.println("commons-text 包：Similarity: " + similarity);
+    }
+
 }

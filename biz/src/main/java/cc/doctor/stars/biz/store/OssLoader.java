@@ -27,7 +27,12 @@ public class OssLoader implements Loader {
     }
 
     @Override
-    public String upload(InputStream stream) {
+    public void upload(File file, InputStream stream) throws IOException {
+
+    }
+
+    @Override
+    public OutputStream createOutputStream(File file) throws FileNotFoundException {
         return null;
     }
 

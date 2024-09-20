@@ -10,6 +10,8 @@
         <result column="file_name" property="fileName"/>
         <result column="store_type" property="storeType"/>
         <result column="path" property="path"/>
+        <result column="is_dir" property="isDir"/>
+        <result column="dir_id" property="dirId"/>
         <result column="is_deleted" property="isDeleted"/>
         <result column="created_at" property="createdAt"/>
         <result column="updated_at" property="updatedAt"/>
@@ -21,9 +23,9 @@
     </sql>
 
     <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
-        insert into file(pub, user_id, file_name, store_type, path) values
+        insert into file(pub, user_id, file_name, store_type, path, dir_id) values
         <foreach collection="list" item="file" separator=",">
-            (#{file.pub},#{file.userId},#{file.fileName},#{file.storeType},#{file.path})
+            (#{file.pub},#{file.userId},#{file.fileName},#{file.storeType},#{file.path},#{file.dirId})
         </foreach>
     </insert>
 

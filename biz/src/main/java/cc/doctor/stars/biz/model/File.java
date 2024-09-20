@@ -62,6 +62,18 @@ public class File implements Serializable {
     private String path;
 
     /**
+     * 是否目录
+     */
+    @TableField("is_dir")
+    private Integer isDir;
+
+    /**
+     * 上级目录ID
+     */
+    @TableField("dir_id")
+    private Integer dirId;
+
+    /**
      * 是否删除
      */
     @TableField("is_deleted")

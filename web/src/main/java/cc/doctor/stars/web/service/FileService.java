@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,29 +44,29 @@ public class FileService {
         response.getOutputStream().write(bytes);
     }
 
-    public Integer storeMultipart(MultipartFile multipartFile) throws IOException {
+    private File multipartToFile(MultipartFile multipartFile) {
         File file = new File();
         file.setPub(YesOrNoEnum.NO.getValue());
         file.setUserId(requestContext.getUserId());
         file.setFileName(multipartFile.getOriginalFilename());
         file.setStoreType(StoreFactory.defaultStoreType());
-        String path = StoreFactory.uploadDefault(multipartFile.getInputStream());
-        file.setPath(path);
+        file.setPath(UUID.randomUUID().toString());
+        return file;
+    }
+
+    public Integer storeMultipart(MultipartFile multipartFile) throws IOException {
+        File file = multipartToFile(multipartFile);
         fileMapper.insert(file);
+        StoreFactory.upload(file, multipartFile.getInputStream());
         return file.getId();
     }
 
     public List<Integer> storeMultiparts(MultipartFile[] multipartFiles) throws IOException {
         List<File> files = new ArrayList<>();
         for (MultipartFile multipartFile : multipartFiles) {
-            File file = new File();
-            file.setPub(YesOrNoEnum.NO.getValue());
-            file.setUserId(requestContext.getUserId());
-            file.setFileName(multipartFile.getOriginalFilename());
-            file.setStoreType(StoreFactory.defaultStoreType());
-            String path = StoreFactory.uploadDefault(multipartFile.getInputStream());
-            file.setPath(path);
+            File file = multipartToFile(multipartFile);
             files.add(file);
+            StoreFactory.upload(file, multipartFile.getInputStream());
         }
         fileMapper.insertBatch(files);
         return files.stream().map(File::getId).collect(Collectors.toList());

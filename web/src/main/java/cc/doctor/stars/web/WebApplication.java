@@ -8,7 +8,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 
 @SpringBootApplication(scanBasePackages = "cc.doctor.stars")
 @MapperScan("cc.doctor.stars.biz.mapper")
-@EnableConfigurationProperties(StoreProperties.class)
 public class WebApplication {
     public static void main(String[] args) {
         SpringApplication.run(WebApplication.class);

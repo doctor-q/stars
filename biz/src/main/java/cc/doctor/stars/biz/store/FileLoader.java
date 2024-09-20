@@ -7,12 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 
 import javax.annotation.PostConstruct;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.UUID;
 
 @Service
 public class FileLoader implements Loader {
@@ -34,11 +31,18 @@ public class FileLoader implements Loader {
     }
 
     @Override
-    public String upload(InputStream stream) throws IOException {
+    public void upload(File file, InputStream stream) throws IOException {
         byte[] bytes = StreamUtils.copyToByteArray(stream);
-        String uuid = UUID.randomUUID().toString();
-        Files.write(Paths.get(storeProperties.getFileRoot(), uuid), bytes);
-        return uuid;
+        Files.write(Paths.get(storeProperties.getFileRoot(), file.getPath()), bytes);
+    }
+
+    @Override
+    public OutputStream createOutputStream(File file) throws IOException {
+        java.io.File f = new java.io.File(storeProperties.getFileRoot(), file.getPath());
+        if (!f.getParentFile().exists()) {
+            f.getParentFile().mkdirs();
+        }
+        return new FileOutputStream(f);
     }
 
     @Override

@@ -10,7 +10,8 @@ import java.io.OutputStream;
 
 public interface Loader {
     StoreTypeEnum type();
-    String upload(InputStream stream) throws IOException;
-    InputStream load(File file) throws FileNotFoundException, IOException;
+    void upload(File file, InputStream stream) throws IOException;
+    OutputStream createOutputStream(File file) throws IOException;
+    InputStream load(File file) throws IOException;
     String createUrl(File file);
 }

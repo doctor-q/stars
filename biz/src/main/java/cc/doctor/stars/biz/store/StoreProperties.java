@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @ConfigurationProperties(prefix = "store")
-//@Component
+@Component
 @Data
 public class StoreProperties {
     private StoreTypeEnum type;
