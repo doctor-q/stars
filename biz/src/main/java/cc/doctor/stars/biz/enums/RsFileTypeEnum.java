@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum RsMimeTypeEnum {
+public enum RsFileTypeEnum {
     VIDEO(1, "视频");
 
     private final int type;

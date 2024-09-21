@@ -4,19 +4,25 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="cc.doctor.stars.biz.model.Resources">
-        <id column="id" property="id" />
-        <result column="rs_type" property="rsType" />
-        <result column="rs_mime_type" property="rsMimeType" />
-        <result column="author_id" property="authorId" />
-        <result column="rs_uri" property="rsUri" />
-        <result column="rs_store_uri" property="rsStoreUri" />
-        <result column="create_time" property="createTime" />
-        <result column="update_time" property="updateTime" />
+        <id column="id" property="id"/>
+        <result column="rs_type" property="rsType"/>
+        <result column="rs_file_type" property="rsFileType"/>
+        <result column="author_id" property="authorId"/>
+        <result column="src_store_id" property="srcStoreId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, rs_type, rs_mime_type, author_id, rs_uri, rs_store_uri, create_time, update_time
+        id, rs_type, rs_file_type, author_id, src_store_id, create_time, update_time
     </sql>
+
+    <insert id="insertBatch" useGeneratedKeys="true" keyProperty="id">
+        insert into resources(rs_type, rs_file_type,author_id, src_store_id) VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.rsType},#{item.rsFileType},#{item.authorId},#{item.srcStoreId})
+        </foreach>
+    </insert>
 
 </mapper>

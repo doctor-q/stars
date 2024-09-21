@@ -81,6 +81,12 @@ public class VideoTask implements Serializable {
     private String extractSubTitleText;
 
     /**
+     * 封面地址
+     */
+    @TableField("cover_url")
+    private String coverUrl;
+
+    /**
      * 封面字幕
      */
     @TableField("extract_cover_text")

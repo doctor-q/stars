@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AwemeRequests {
-    public static AwemeResponse getAwemeList(String secUid) {
+    public static String getAwemeList(String secUid) {
         String msToken = "NvlnUMNrMMjsQQ4lFJnQio5_p2f06tBwoX21f_QhWPKof2CX7u1BT5q4cMt-f4ozSs3D5Y-i8Tnq78H06qQZuOd55rbxm4GcPaxQNYBKQme3A231kHuRC-VxESsneYK0";
         String aBogus = "EfWqQ58gdEVTvf6g5U2LfY3q64-3Y8Vo0trEMD2f0VVN0639HMPk9exojYGve3jjNs%2FDIeDjy4hbO3xprQ%2Fn8Hwf7Wsx%2F2CZmL00t-Pg-VSSs1feeLbQrsJx-kJlFeep5JV3EcvhqJKczbuk09cJ5iIlO6ZCcHgJEimyb1pngIWw9-Q-";
         // sec_user_id: MS4wLjABAAAAEtCPQHj7DdEpCo8Oc4RVOhx-HEoluCTFKcBWhkFGf9U
@@ -19,7 +19,6 @@ public class AwemeRequests {
         headers.put("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36");
         headers.put("Referer", String.format("https://www.douyin.com/user/%s", secUid));
         CloseableHttpResponse response = HttpUtils.get(String.format(url, secUid, msToken, aBogus), null, headers);
-        String res = HttpUtils.parseHttpResponse(response);
-        return JSON.parseObject(res, AwemeResponse.class);
+        return HttpUtils.parseHttpResponse(response);
     }
 }

@@ -139,7 +139,7 @@ public class VideoPipeline {
         return dir.getId();
     }
 
-    public String extractSubTitle(Integer dirId) throws IOException {
+    public String extractSubTitle(Integer dirId) throws IOException, InterruptedException {
         // 创建临时目录
         List<File> files = fileMapper.selectList(new LambdaQueryWrapper<File>().eq(File::getDirId, dirId));
         if (files.isEmpty()) {

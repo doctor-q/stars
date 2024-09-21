@@ -41,8 +41,8 @@ public class Resources implements Serializable {
     /**
      * 资源文件类型
      */
-    @TableField("rs_mime_type")
-    private Integer rsMimeType;
+    @TableField("rs_file_type")
+    private Integer rsFileType;
 
     /**
      * 作者id
@@ -51,16 +51,10 @@ public class Resources implements Serializable {
     private Integer authorId;
 
     /**
-     * 资源路径
+     * 资源源文件id
      */
-    @TableField("rs_uri")
-    private String rsUri;
-
-    /**
-     * 资源存储路径
-     */
-    @TableField("rs_store_uri")
-    private String rsStoreUri;
+    @TableField("src_store_id")
+    private Integer srcStoreId;
 
     /**
      * 创建时间

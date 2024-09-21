@@ -6,12 +6,14 @@
     <resultMap id="BaseResultMap" type="cc.doctor.stars.biz.model.VideoTask">
         <id column="id" property="id" />
         <result column="resource_id" property="resourceId" />
+        <result column="origin_url" property="originUrl" />
         <result column="upload" property="upload" />
         <result column="upload_id" property="uploadId" />
         <result column="framed" property="framed" />
         <result column="frame_id" property="frameId" />
         <result column="extract_sub_title" property="extractSubTitle" />
         <result column="extract_sub_title_text" property="extractSubTitleText" />
+        <result column="cover_url" property="coverUrl" />
         <result column="extract_cover_text" property="extractCoverText" />
         <result column="task_status" property="taskStatus" />
         <result column="error_stack" property="errorStack" />
@@ -21,7 +23,14 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, resource_id, upload, upload_id, framed, frame_id, extract_sub_title, extract_sub_title_text, extract_cover_text, task_status, error_stack, create_time, update_time
+        id, resource_id, upload, upload_id, framed, frame_id, extract_sub_title, extract_sub_title_text, cover_url, extract_cover_text, task_status, error_stack, create_time, update_time
     </sql>
+
+    <insert id="insertBatch" useGeneratedKeys="true" keyProperty="id">
+        insert into video_task(resource_id, origin_url, cover_url)  values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.resourceId}, #{item.originUrl}, #{item.coverUrl})
+        </foreach>
+    </insert>
 
 </mapper>

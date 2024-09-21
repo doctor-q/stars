@@ -557,7 +557,6 @@ public class AwemeResponse {
             aweme.setAwStCollectCount(aweme_list.statistics.collect_count);
             aweme.setAwStPlayCount(aweme_list.statistics.play_count);
             aweme.setAwStShareCount(aweme_list.statistics.share_count);
-            // TODO URL相关资源有时限，自己保存
             aweme.setAwVPlayUrl(CollectUtils.join(aweme_list.video.getPlay_addr().getUrl_list()));
             aweme.setAwVPlayUri(aweme_list.video.getPlay_addr().getUri());
             aweme.setAwVPlaySize(aweme_list.video.getPlay_addr().getData_size());

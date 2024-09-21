@@ -1,17 +1,19 @@
 package cc.doctor.stars.crawler.video;
 
 
+import cc.doctor.stars.biz.utils.ConcurrentUtils;
 import cc.doctor.stars.crawler.utils.OcrUtils;
+import com.benjaminwan.ocrlibrary.TextBlock;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.text.similarity.LevenshteinDistance;
-import org.springframework.util.StringUtils;
+import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 图片文字提取
@@ -19,20 +21,34 @@ import java.util.List;
 @Slf4j
 public class SubTitleExtractor {
 
-    public static List<String> extract(String dir) throws IOException {
+    private static final double similarity_threshold = 0.85;
+
+    public static List<String> extract(String dir) throws IOException, InterruptedException {
         return removeDup(extractFromPath(dir));
     }
 
-    public static List<String> extractFromPath(String dir) throws IOException {
-        List<String> extracts = new ArrayList<>();
+    /**
+     * 优化：
+     * 1. 支持对文字进行范围筛选
+     */
+    public static Map<String, List<TextBlock>> extractFromPath(String dir) throws IOException, InterruptedException {
+        Map<String, List<TextBlock>> extracts = new TreeMap<>();
+        List<Runnable> runnables = new ArrayList<>();
         Files.list(Paths.get(dir)).map(Path::toString).sorted().forEach(file -> {
-            String result = OcrUtils.getResult(file);
-            if (StringUtils.isEmpty(result)) {
-                log.warn("文件{}识别质量太低", file);
-            } else {
-                extracts.add(result);
-            }
+            runnables.add(() -> {
+                List<TextBlock> result = OcrUtils.getResult(file);
+                if (CollectionUtils.isEmpty(result)) {
+                    log.warn("文件{}没有字幕或识别质量太低", file);
+                } else {
+                    extracts.put(file, result);
+                }
+            });
         });
+        if (runnables.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        runnables.get(0).run();
+        ConcurrentUtils.newParallelPool(8, runnables);
         return extracts;
     }
 
@@ -40,34 +56,38 @@ public class SubTitleExtractor {
      * 去重、去标题等
      * 去重：根据编辑距离以一个阈值判断是否相同字幕，取分值更高的文本作为解析文本
      */
-    public static List<String> removeDup(List<String> extracts) {
-        List<String> results = new ArrayList<>();
-        for (String extract : extracts) {
+    public static List<String> removeDup(Map<String, List<TextBlock>> extracts) {
+        List<List<TextBlock>> results = new ArrayList<>();
+        for (List<TextBlock> textBlocks : extracts.values()) {
             if (results.isEmpty()) {
-                results.add(extract);
+                results.add(textBlocks);
             } else {
-                String prev = results.get(results.size() - 1);
-                if (!extract.equals(prev)) {
-                    results.add(extract);
+                List<TextBlock> prevBlocks = results.get(results.size() - 1);
+                double similarity = similarity(prevBlocks, textBlocks);
+                if (similarity >= similarity_threshold) {
+                    if (OcrUtils.avg(prevBlocks) < OcrUtils.avg(textBlocks)) {
+                        results.set(results.size() - 1, textBlocks);
+                    }
+                } else {
+                    results.add(textBlocks);
                 }
             }
         }
         // 去标题
-        return results;
+        return results.stream().map(r -> OcrUtils.join(r, ",")).collect(Collectors.toList());
     }
 
-    public static void main(String[] args) throws IOException {
-        List<String> strings = extractFromPath("/home/doctor/Pictures/frames/lyf.mp4");
+    private static double similarity(List<TextBlock> textBlocks1, List<TextBlock> textBlocks2) {
+        String str1 = OcrUtils.join(textBlocks1, "");
+        String str2 = OcrUtils.join(textBlocks2, "");
+        int editDistance = LevenshteinDistance.getDefaultInstance().apply(str1, str2);
+        return 1 - ((double) editDistance / Math.max(str1.length(), str2.length()));
+    }
+
+
+    public static void main(String[] args) throws IOException, InterruptedException {
+        List<String> strings = extract("/home/doctor/Pictures/frames/by.mp4");
         System.out.println(strings);
-        List<String> strings1 = removeDup(strings);
-        System.out.println(strings1);
-//        String str1 = "接着朱刚鬣原形毕露, 甜兮";
-//        String str2 = "接着朱刚鬣原形毕露, 甜说居";
-//        int editDistance = LevenshteinDistance.getDefaultInstance().apply(str1, str2);
-//        double similarity = 1 - ((double) editDistance / Math.max(str1.length(), str2.length()));
-//
-//        System.out.println("commons-text 包：Edit Distance: " + editDistance);
-//        System.out.println("commons-text 包：Similarity: " + similarity);
     }
 
 }
